@@ -1,4 +1,4 @@
-> ⚠️ Firefox has ended support for Amazon Fire TV. This app tries to do its work, but it is unoffical
+> ⚠️ Firefox has ended support for Amazon Fire TV. This app tries to do its work, but it is unoffical.
 
 Down bellow is original README:
 
