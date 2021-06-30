@@ -1,0 +1,18 @@
+# From: https://github.com/mozilla-mobile/fenix/blob/master/.github/workflows/update-ac.yml
+
+name: "Update Android-Components"
+
+on:
+  schedule:
+    - cron: '21 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  main:
+    name: "Update Android-Components"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: "Update Android-Components"
+        run: ./automation/actions/update_ac.sh ${{ secrets.GITHUB_TOKEN }}
+
