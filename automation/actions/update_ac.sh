@@ -49,5 +49,5 @@ if [[ $(gh pr list --base "$BRANCH") ]]; then
     echo "There's already an open PR."
 else
     echo "No PR found. Opening new PR."
-    gh pr create --base master --head "$BRANCH" --no-edit -m "Update Android Components version"
+    gh pr create --base master --head "$BRANCH" -m "Update Android Components version"
 fi
