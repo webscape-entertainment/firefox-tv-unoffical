@@ -45,7 +45,7 @@ URL="https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/$GITHUB_REPOSITORY/"
 git push --force --no-verify --quiet "$URL" "$BRANCH" > /dev/null 2>&1 || echo "Failed ($?)"
 
 # Open a PR if needed
-if [[ $(gh pr list --head "$BRANCH") ]]; then
+if [[ $(gh pr list --base "$BRANCH") ]]; then
     echo "There's already an open PR."
 else
     echo "No PR found. Opening new PR."
