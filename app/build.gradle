@@ -20,21 +20,29 @@ android {
     compileSdkVersion Config.compileSdkVersion
 
     defaultConfig {
-        applicationId "org.mozilla.reference.browser"
+        applicationId "org.mozilla.tv.firefox-unoffical"
         minSdkVersion Config.minSdkVersion
         compileSdkVersion Config.targetSdkVersion
         targetSdkVersion Config.targetSdkVersion
         versionCode 11
         versionName Config.generateDebugVersionName()
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "org.mozilla.tv.firefox.FirefoxOnDeviceTestRunner"
         testInstrumentationRunnerArguments clearPackageData: 'true'
+
+        multiDexEnabled true
+
+        ndk {
+            // This strips unused architectures out of our build, lowering out APK size.
+            // At this time, all FFTV devices run ARM v7, and most emulators use x86. See
+            // #2647 for details
+            // TODO improve APK size further in #2743
+            abiFilters 'armeabi-v7a', 'x86'
+        }
     }
 
-    def releaseTemplate = {
-        minifyEnabled false
-        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        matchingFallbacks = ['release'] // Use on the "release" build type in dependencies (AARs)
+    dexOptions {
+        preDexLibraries true
     }
 
     buildFeatures {
@@ -42,32 +50,55 @@ android {
     }
 
     buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         debug {
             applicationIdSuffix ".debug"
         }
-        raptor releaseTemplate >> { // the ">>" concatenates the raptor-specific options with the template
-            applicationIdSuffix ".raptor"
-            manifestPlaceholders.isRaptorEnabled = "true"
-            matchingFallbacks = ['release']
+    }
+
+    flavorDimensions "engine"
+
+    productFlavors {
+        system {
+            applicationIdSuffix ".system"
+            dimension "engine"
         }
-        nightly releaseTemplate >> {
-            buildConfigField "boolean", "IS_RELEASED", "true"
+
+        gecko {
+            dimension "engine"
         }
     }
 
-    variantFilter { // There's a "release" build type that exists by default that we don't use (it's replaced by "nightly" and "beta")
-        if (buildType.name == 'release') {
-            setIgnore true
+    sourceSets {
+        test {
+            resources {
+                // Make the default asset folder available as test resource folder. This is only
+                // necessary for SearchEngineParserTest.getBasePath, which access the test resources
+                // before RuntimeEnvironment.application is available.
+                srcDir "${projectDir}/src/main/assets/"
+            }
         }
     }
 
     testOptions {
         execution 'ANDROIDX_TEST_ORCHESTRATOR'
         animationsDisabled = true
+        unitTests.includeAndroidResources true // for robolectric.
     }
 
     lintOptions {
         lintConfig file("lint.xml")
+        //baseline file("lint-baseline.xml")
+
+        // We want to fail the build if there is a lint error, otherwise we'll never fix them.
+        // This is the most efficient way to make Lint fail: the lint tool will add additional
+        // checks in the future so this ensures they will fail our build as soon as they are added,
+        // unlike a whitelist.
+        //warningsAsErrors true
     }
 
     compileOptions {
@@ -79,127 +110,23 @@ android {
         exclude 'META-INF/atomicfu.kotlin_module'
     }
 
-    splits {
+    bundle {
         abi {
-            enable true
-
-            reset()
-
-            include "x86", "armeabi-v7a", "arm64-v8a", "x86_64"
+            enableSplit = true
         }
     }
 }
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
     kotlinOptions {
-        jvmTarget = "1.8"
-        useIR = true
-        freeCompilerArgs += "-Xuse-experimental=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        jvmTarget = JavaVersion.VERSION_1_8
+        //allWarningsAsErrors = true
     }
 }
 
-def baseVersionCode = generatedVersionCode
-
-android.applicationVariants.all { variant ->
-
-// -------------------------------------------------------------------------------------------------
-// Sentry: Read token from local file if it exists (Only release builds)
-// -------------------------------------------------------------------------------------------------
-    print("Sentry token:  "+ variant.name)
-    try {
-        def token = new File("${rootDir}/.sentry_token").text.trim()
-        buildConfigField 'String', 'SENTRY_TOKEN', '"' + token + '"'
-        println "(Added from .sentry_token file)"
-    } catch (FileNotFoundException ignored) {
-        buildConfigField 'String', 'SENTRY_TOKEN', 'null'
-        println(" :( ")
-    }
-
-// -------------------------------------------------------------------------------------------------
-// Activating crash reports with command line parameter.
-// -------------------------------------------------------------------------------------------------
-    if (project.hasProperty("crashReportEnabled") && project.property("crashReportEnabled") == "true") {
-        buildConfigField 'boolean', 'CRASH_REPORTING_ENABLED', 'true'
-    } else {
-        buildConfigField 'boolean', 'CRASH_REPORTING_ENABLED', 'false'
-    }
-
-// -------------------------------------------------------------------------------------------------
-// Activating telemetry  with command line paramter.
-// -------------------------------------------------------------------------------------------------
-
-if (project.hasProperty("telemetry") && project.property("telemetry") == "true") {
-    buildConfigField 'boolean', 'TELEMETRY_ENABLED', 'true'
-} else {
-    buildConfigField 'boolean', 'TELEMETRY_ENABLED', 'false'
-}
-
-// -------------------------------------------------------------------------------------------------
-// Generating version codes for Google Play
-// -------------------------------------------------------------------------------------------------
-    if (variant.buildType.buildConfigFields['IS_RELEASED']?.value) {
-        // The Google Play Store does not allow multiple APKs for the same app that all have the
-        // same version code. Therefore we need to have different version codes for our ARM and x86
-        // builds.
-
-        // Our x86 builds need a higher version code to avoid installing ARM builds on an x86 device
-        // with ARM compatibility mode.
-
-        def versionName = Config.releaseVersionName(project)
-
-        variant.outputs.each { output ->
-            def abi = output.getFilter(OutputFile.ABI)
-
-            def versionCodeOverride = baseVersionCode
-
-            if (abi == "x86_64") {
-                versionCodeOverride = baseVersionCode + 3
-            } else if (abi == "x86") {
-                versionCodeOverride = baseVersionCode + 2
-            } else if (abi == "arm64-v8a") {
-                versionCodeOverride = baseVersionCode + 1
-            } else if (abi == "armeabi-v7a") {
-                versionCodeOverride = baseVersionCode
-            }
-
-            println("versionCode for $abi = $versionCodeOverride")
-
-            output.versionNameOverride = versionName
-            output.versionCodeOverride = versionCodeOverride
-        }
-
-        // If this is a release build, validate that "versionName" is set
-        tasks.withType(AppPreBuildTask) { prebuildTask ->
-            // You can't add a closure to a variant, so we need to look for an early variant-specific type
-            // of task (AppPreBuildTask is the first) and filter to make sure we're looking at the task for
-            // this variant that we're currently configuring
-            if (prebuildTask.variantName != variant.name) {
-                return
-            }
-
-            // Append to the task so the first thing it does is run our validation
-            prebuildTask.doFirst {
-                if (!project.hasProperty('versionName')) {
-                    throw new RuntimeException("Release builds require the 'versionName' property to be set.\n" +
-                            "If you're using an IDE, set your build variant to be a \"debug\" type.\n" +
-                            "If you're using the command-line, either build a debug variant instead ('./gradlew assembleDebug')\n" +
-                            "\tor continue building the release build and set the \"versionName\" property ('./gradlew -PversionName=<...> assembleNightly').")
-                    // TODO when Android Studio 3.5.0 is prevalent, we can set the "debug" build type as the default
-                    // https://issuetracker.google.com/issues/36988145#comment59
-                }
-            }
-        }
-    }
-
-// -------------------------------------------------------------------------------------------------
-// BuildConfig: Set flag for official builds; similar to MOZILLA_OFFICIAL in mozilla-central.
-// -------------------------------------------------------------------------------------------------
-
-    if (project.hasProperty("official") || gradle.hasProperty("localProperties.official")) {
-        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'true'
-    } else {
-        buildConfigField 'Boolean', 'MOZILLA_OFFICIAL', 'false'
-    }
+configurations {
+    geckoImplementation {}
+    systemImplementation {}
 }
 
 dependencies {
@@ -211,7 +138,9 @@ dependencies {
     implementation Deps.mozilla_concept_sync
     implementation Deps.mozilla_concept_push
 
-    implementation Deps.mozilla_browser_engine_gecko
+    // Engine
+    geckoImplementation Deps.mozilla_browser_engine_gecko
+    systemImplementation Deps.mozilla_browser_engine_system
 
     implementation Deps.mozilla_browser_awesomebar
     implementation Deps.mozilla_browser_domains
@@ -320,6 +249,134 @@ dependencies {
     androidTestImplementation Deps.espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
     }
+}
+
+// -------------------------------------------------------------------------------------------------
+// Activating crash reports with command line parameter.
+// -------------------------------------------------------------------------------------------------
+    if (project.hasProperty("crashReportEnabled") && project.property("crashReportEnabled") == "true") {
+        buildConfigField 'boolean', 'CRASH_REPORTING_ENABLED', 'true'
+    } else {
+        buildConfigField 'boolean', 'CRASH_REPORTING_ENABLED', 'false'
+    }
+
+// -------------------------------------------------------------------------------------------------
+// Activating telemetry  with command line paramter.
+// -------------------------------------------------------------------------------------------------
+
+if (project.hasProperty("telemetry") && project.property("telemetry") == "true") {
+    buildConfigField 'boolean', 'TELEMETRY_ENABLED', 'true'
+} else {
+    buildConfigField 'boolean', 'TELEMETRY_ENABLED', 'false'
+}
+
+android.applicationVariants.all { variant ->
+    def buildType = variant.buildType.name
+    if (buildType == "release") {
+        variant.outputs.all { output ->
+            setVersionCodeOverride(generatedVersionCode)
+        }
+    }
+
+    println("Build type: " + buildType + " (versionCode = " + variant.mergedFlavor.versionCode + ")")
+}
+
+// Disable unit tests for gecko since we don't actively support gecko variant for FFTV
+gradle.taskGraph.useFilter { task ->
+    if (task.name.startsWith("test") && task.name.contains("Gecko")) {
+        return true;
+    }
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------------------------
+// L10N: Generate list of locales
+// Firefox TV provides its own (Android independent) locale switcher. That switcher requires a list
+// of locale codes. We generate that list here to avoid having to manually maintain a list of locales:
+// -------------------------------------------------------------------------------------------------
+
+def getEnabledLocales() {
+    def resDir = file('src/main/res')
+
+    def potentialLanguageDirs = resDir.listFiles(new FilenameFilter() {
+        @Override
+        boolean accept(File dir, String name) {
+            return name.startsWith("values-");
+        }
+    })
+
+    def langs = potentialLanguageDirs.findAll {
+        // Only select locales where strings.xml exists
+        // Some locales might only contain e.g. sumo URLS in urls.xml, and should be skipped (see es vs es-ES/es-MX/etc)
+        return  file(new File(it, "strings.xml")).exists()
+    } .collect {
+        // And reduce down to actual values-* names
+        return it.name
+    } .collect {
+        return it.substring("values-".length())
+    } .collect {
+        if (it.length() > 3 && it.contains("-r")) {
+            // Android resource dirs add an "r" prefix to the region - we need to strip that for java usage
+            // Add 1 to have the index of the r, without the dash
+            def regionPrefixPosition = it.indexOf("-r") + 1
+
+            return it.substring(0, regionPrefixPosition) + it.substring(regionPrefixPosition + 1)
+        } else {
+            return it
+        }
+    }.collect {
+        return '"' + it + '"'
+    }
+
+    // en-US is the default language (in "values") and therefore needs to be added separately
+    langs << "\"en-US\""
+
+    return langs.sort { it }
+}
+
+def generatedLocaleListDir = 'src/main/java/org/mozilla/tv/firefox/generated'
+def generatedLocaleListFilename = 'LocaleList.java'
+
+tasks.whenTaskAdded { task ->
+    if (name.contains("compile")) {
+        task.dependsOn generateLocaleList
+    }
+}
+
+clean.doLast {
+    file(generatedLocaleListDir).deleteDir()
+}
+
+task generateLocaleList {
+    doLast {
+        def dir = file(generatedLocaleListDir)
+        dir.mkdir()
+        def localeList = file(new File(dir, generatedLocaleListFilename))
+
+        localeList.delete()
+        localeList.createNewFile()
+        localeList << "package org.mozilla.tv.firefox.generated;" << "\n" << "\n"
+        localeList << "import java.util.Arrays;" << "\n"
+        localeList << "import java.util.Collections;" << "\n"
+        localeList << "import java.util.List;" << "\n"
+        localeList << "\n"
+        localeList << "public class LocaleList {" << "\n"
+        // findbugs doesn't like "public static final String[]", see http://findbugs.sourceforge.net/bugDescriptions.html#MS_MUTABLE_ARRAY
+        localeList << "    public static final List<String> BUNDLED_LOCALES = Collections.unmodifiableList(Arrays.asList(new String[] { "
+        localeList << getEnabledLocales().join(", ") + " }));" << "\n"
+        localeList << "}" << "\n"
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (name.contains("compile")) {
+        task.dependsOn generateLocaleList
+    }
+}
+
+clean.doLast {
+    file(generatedLocaleListDir).deleteDir()
 }
 
 // -------------------------------------------------------------------------------------------------

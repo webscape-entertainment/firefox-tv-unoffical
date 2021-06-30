@@ -55,6 +55,7 @@ object Deps {
 
     const val mozilla_browser_awesomebar = "org.mozilla.components:browser-awesomebar:${Versions.mozilla_android_components}"
     const val mozilla_browser_engine_gecko = "org.mozilla.components:browser-engine-gecko:${Versions.mozilla_android_components}"
+    const val mozilla_browser_engine_system = "org.mozilla.components:browser-engine-system:${Versions.mozilla_android_components}"
     const val mozilla_browser_domains = "org.mozilla.components:browser-domains:${Versions.mozilla_android_components}"
     const val mozilla_browser_session = "org.mozilla.components:browser-session:${Versions.mozilla_android_components}"
     const val mozilla_browser_session_storage = "org.mozilla.components:browser-session-storage:${Versions.mozilla_android_components}"
