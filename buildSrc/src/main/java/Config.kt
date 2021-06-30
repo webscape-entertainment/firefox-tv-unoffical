@@ -10,24 +10,25 @@ import java.util.Locale
 object Config {
     // Synchronized build configuration for all modules
     const val compileSdkVersion = 29
-    const val minSdkVersion = 21
     const val targetSdkVersion = 29
+    const val minSdkVersion = 22
 
     @JvmStatic
     fun generateDebugVersionName(): String {
         val today = Date()
+        val mainVersion = FirefoxTV.VERSION
+        val acVersion = AndroidComponents.VERSION//.split(".")[0]
         // Append the year (2 digits) and week in year (2 digits). This will make it easier to distinguish versions and
         // identify ancient versions when debugging issues. However this will still keep the same version number during
         // the week so that we do not end up with a lot of versions in tools like Sentry. As an extra this matches the
         // sections we use in the changelog (weeks).
-        return SimpleDateFormat("1.0.yyww", Locale.US).format(today)
+        return SimpleDateFormat("$mainVersion.yyww-$acVersion", Locale.US).format(today)
     }
 
     @JvmStatic
     fun releaseVersionName(project: Project): String {
-        // This function is called in the configuration phase, before gradle knows which variants we'll use.
-        // So, validation that "versionName" has been set happens elsewhere (at time of writing, we staple
-        // validation to tasks of type "AppPreBuildTask"
-        return if (project.hasProperty("versionName")) project.property("versionName") as String else ""
+        val mainVersion = FirefoxTV.VERSION
+        val acVersion = AndroidComponents.VERSION//.split(".")[0]
+        return "$mainVersion-$acVersion"
     }
 }

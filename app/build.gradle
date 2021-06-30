@@ -3,7 +3,14 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'findbugs'
+apply plugin: 'jacoco'
+apply plugin: 'pmd'
+apply plugin: 'checkstyle'
+apply plugin: 'kotlin-android-extensions'
 apply from: "$project.rootDir/automation/gradle/versionCode.gradle"
 
 import com.android.build.gradle.internal.tasks.AppPreBuildTask
@@ -17,7 +24,7 @@ android {
         minSdkVersion Config.minSdkVersion
         compileSdkVersion Config.targetSdkVersion
         targetSdkVersion Config.targetSdkVersion
-        versionCode 1
+        versionCode 11
         versionName Config.generateDebugVersionName()
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

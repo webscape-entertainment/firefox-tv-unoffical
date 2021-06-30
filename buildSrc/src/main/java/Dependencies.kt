@@ -16,8 +16,9 @@ private object Versions {
 
     const val workmanager = "2.0.0"
     const val google_material = "1.0.0"
+    const val detekt = "1.17.1"
 
-    const val android_gradle_plugin = "7.0.0-alpha14"
+    const val android_gradle_plugin = "7.0.0"
 
     const val mozilla_android_components = AndroidComponents.VERSION
 
@@ -30,6 +31,7 @@ private object Versions {
     const val tools_test_rules = "1.1.0"
     const val tools_test_runner = "1.1.0"
     const val uiautomator = "2.2.0"
+    const val osslicenses_plugin = "0.9.5"
 
     object AndroidX {
         const val activity_compose = "1.3.0-alpha05"
@@ -142,4 +144,6 @@ object Deps {
     const val tools_test_rules = "androidx.test:rules:${Versions.tools_test_rules}"
     const val tools_test_runner = "androidx.test:runner:${Versions.tools_test_runner}"
     const val uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.uiautomator}"
+
+    const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
 }

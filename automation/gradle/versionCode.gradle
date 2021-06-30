@@ -9,13 +9,13 @@ import java.text.SimpleDateFormat
 // The result of the version code depends on the timezone. We assume that this script will only be used
 // for release versions and running on our build servers with a fixed timezone.
 //
-// The version code is composed like: yDDDHHmm
-//  * y   = Double digit year, with 18 subtracted: 2018 -> 18 -> 0
+// The version code is composed like: yyDDDHHmm
+//  * yy   = Double digit year: 2018 -> 18
 //  * DDD = Day of the year, pad with zeros if needed: September 6th -> 249
 //  * HH  = Hour in day (00-23)
 //  * mm  = Minute in hour
 //
-// For September 6th, 2018, 9:41 am this will generate the versionCode: 2490941 (0-249-09-41).
+// For September 6th, 2018, 9:41 am this will generate the versionCode: 2490941 (18-249-09-41).
 //
 // Note that we only use this generated version code for builds we want to distribute. For local
 // debug builds we use a fixed versionCode to not mess with the caching mechanism of the build
@@ -24,9 +24,8 @@ import java.text.SimpleDateFormat
 ext {
     def today = new Date()
 
-    // We use the current year (double digit) and subtract 18. We first released Reference Browser in
-    // 2018 so this value will start counting at 0 and increment by one every year.
-    def year = String.valueOf((new SimpleDateFormat("yy").format(today) as int) - 18)
+    // We use the current year (double digit)
+    def year = String.valueOf((new SimpleDateFormat("yy").format(today) as int))
 
     // We use the day in the Year (e.g. 248) as opposed to month + day (0510) because it's one digit shorter.
     // If needed we pad with zeros (e.g. 25 -> 025)
