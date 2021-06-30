@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<!-- This file is similar to settings_screen_buttons. However, it is expected to expand as more
+     FxA options are added. This is why we keep it as a separate file instead of handling both
+     in the same file. -->
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/photonGrey70">
+
+    <!-- Text set programmatically -->
+    <Button
+        android:id="@+id/buttonFirefoxTabs"
+        style="@style/ConfirmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@string/font_ember_regular"
+        android:minWidth="48dp"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/userDisplayName">
+
+        <requestFocus />
+    </Button>
+
+    <Button
+        android:id="@+id/buttonSignOut"
+        style="@style/CancelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginStart="24dp"
+        android:fontFamily="@string/font_ember_regular"
+        android:minWidth="48dp"
+        android:text="@string/fxa_settings_secondary_button"
+        android:textSize="14sp"
+        app:layout_constraintStart_toEndOf="@+id/buttonFirefoxTabs"
+        app:layout_constraintTop_toTopOf="@+id/buttonFirefoxTabs" />
+
+    <ImageButton
+        android:id="@+id/backButton"
+        style="@style/NavigationButton"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="32dp"
+        android:contentDescription="@string/content_description_back"
+        android:src="@drawable/ic_tv_back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/avatarImage"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="32dp"
+        android:contentDescription="@string/content_description_fxa_profile_avatar_image"
+        app:layout_constraintEnd_toStartOf="@+id/signedInAs"
+        app:layout_constraintTop_toTopOf="@+id/signedInAs"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <TextView
+        android:id="@+id/title"
+        style="@style/TextAppearance.AppCompat.Large"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/button_size"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="32dp"
+        android:fontFamily="@string/font_ember_regular"
+        android:gravity="center_vertical"
+        android:maxWidth="400dp"
+        android:text="@string/fxa_settings_header"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/backButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Text is set programmatically -->
+    <TextView
+        android:id="@+id/signedInAs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:fontFamily="@string/font_ember_regular"
+        android:paddingStart="0dp"
+        android:paddingEnd="300dp"
+        android:textColor="@color/photonGrey10_a40p"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/title"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
+
+    <TextView
+        android:id="@+id/userDisplayName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@string/font_ember_regular"
+        android:paddingStart="0dp"
+        android:paddingEnd="300dp"
+        android:textColor="@color/photonGrey10_a80p"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/signedInAs"
+        app:layout_constraintTop_toBottomOf="@+id/signedInAs" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

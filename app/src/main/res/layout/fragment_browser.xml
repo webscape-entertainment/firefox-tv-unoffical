@@ -2,87 +2,102 @@
 <!-- This Source Code Form is subject to the terms of the Mozilla Public
    - License, v. 2.0. If a copy of the MPL was not distributed with this
    - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:mozac="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/browserFragmentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BrowserActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.compose.ui.platform.ComposeView
-        android:id="@+id/compose_view"
-        android:layout_width="match_parent"
-        android:layout_gravity="top"
-        android:background="#ffffcc00"
-        android:layout_marginBottom="@dimen/browser_toolbar_height"
-        android:layout_height="@dimen/browser_toolbar_height"
-        android:visibility="gone" />
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefresh"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <mozilla.components.concept.engine.EngineView
-            android:id="@+id/engineView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-    <mozilla.components.browser.awesomebar.BrowserAwesomeBar
-        android:id="@+id/awesomeBar"
+    <LinearLayout
+        android:id="@+id/browserContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="4dp"
-        android:visibility="gone"
-        mozac:awesomeBarTitleTextColor="#ffffff"
-        mozac:awesomeBarDescriptionTextColor="#dddddd"
-        mozac:awesomeBarChipTextColor="#ffffff"
-        mozac:awesomeBarChipBackgroundColor="#444444" />
+        android:orientation="vertical">
 
-    <mozilla.components.feature.findinpage.view.FindInPageBar
-        android:id="@+id/findInPageBar"
+        <LinearLayout
+            android:id="@+id/bannerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="#2A2A2E"
+            android:gravity="center">
+
+            <ImageView
+                android:contentDescription="@null"
+                android:layout_width="80sp"
+                android:layout_height="64sp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:src="@drawable/warning"/>
+
+            <TextView
+              android:id="@+id/bannerTextView"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_weight="1"
+              android:fontFamily="@string/font_ember_regular"
+              android:textSize="18sp"
+              android:lineSpacingExtra="6sp"
+              android:paddingTop="16dp"
+              android:paddingBottom="16dp"
+              android:text="@string/banner_text"
+              android:textColor="#FBFBFE" />
+
+          <Button
+              android:id="@+id/bannerMoreInfoButton"
+              style="@style/BannerConfirmButton"
+              android:layout_width="wrap_content"
+              android:layout_height="36dp"
+              android:layout_marginStart="8dp"
+              android:layout_marginEnd="16dp"
+              android:layout_weight="0"
+              android:text="@string/banner_more_info_button"
+              android:textSize="18sp"
+              android:fontFamily="@string/font_ember_regular"/>
+        </LinearLayout>
+
+        <org.mozilla.tv.firefox.widget.ResizableKeyboardCoordinatorLayout
+            app:viewToHideWhenActivated="@+id/erase"
+            android:layout_marginTop="0dp"
+            android:id="@+id/main_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:clipChildren="false">
+
+            <mozilla.components.concept.engine.EngineView
+                android:id="@+id/engineView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbarThumbVertical="@drawable/scrollbar_thumb">
+            </mozilla.components.concept.engine.EngineView>
+
+            <include layout="@layout/hint_bar"/>
+
+        </org.mozilla.tv.firefox.widget.ResizableKeyboardCoordinatorLayout>
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/videoContainer"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom"
-        android:background="#000000"
-        mozac:findInPageQueryTextColor="#ffffff"
-        mozac:findInPageQueryHintTextColor="#dddddd"
-        mozac:findInPageResultCountTextColor="#ff88ff"
-        mozac:findInPageButtonsTint="#ff88ff"
-        android:visibility="gone"
-        app:layout_behavior="org.mozilla.reference.browser.browser.FindInPageBarBehavior" />
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:visibility="gone" />
 
-    <mozilla.components.browser.toolbar.BrowserToolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/browser_toolbar_height"
-        android:layout_gravity="bottom"
-        android:background="@color/toolbarBackgroundColor"
-        mozac:browserToolbarTrackingProtectionAndSecurityIndicatorSeparatorColor="@color/photonWhite"
-        mozac:browserToolbarSuggestionForegroundColor="@color/toolbarSuggestionForeground"
-        mozac:browserToolbarSuggestionBackgroundColor="@color/toolbarSuggestionBackground" />
+    <!-- src and initial position set in code. See CursorModel -->
+    <org.mozilla.tv.firefox.webrender.cursor.CursorView
+        android:id="@+id/cursorView"
+        android:layout_width="@dimen/remote_cursor_size"
+        android:layout_height="@dimen/remote_cursor_size"
+        android:scaleType="centerInside" />
 
-    <mozilla.components.feature.readerview.view.ReaderViewControlsBar
-        android:id="@+id/readerViewBar"
-        android:background="#FFFFFFFF"
-        android:elevation="10dp"
-        android:visibility="gone"
-        android:layout_gravity="bottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/readerViewAppearanceButton"
+    <!-- Bottom margin for the FirefoxProgressBar is set programmatically
+         due to differing requirements between experiments -->
+    <org.mozilla.tv.firefox.webrender.FirefoxProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
-        android:src="@drawable/mozac_ic_font"
-        android:visibility="gone"
-        android:layout_marginRight="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginBottom="16dp"
-        app:layout_behavior="org.mozilla.reference.browser.browser.ReaderViewAppearanceButtonBehavior" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        android:layout_gravity="bottom|start"
+        android:descendantFocusability="blocksDescendants"
+        android:focusable="false" />
+</FrameLayout>

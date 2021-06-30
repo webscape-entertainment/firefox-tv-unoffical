@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/home_tile_width"
+    android:layout_height="150dp"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:orientation="vertical">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/settings_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_tile_height"
+        android:focusable="true"
+        android:foreground="@drawable/settings_item_selector"
+        app:cardBackgroundColor="@color/photonGrey50"
+        app:cardCornerRadius="4dp">
+
+        <ImageView
+            android:id="@+id/settings_icon"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            tools:ignore="ContentDescription" />
+
+    </androidx.cardview.widget.CardView>
+
+    <TextView
+        android:id="@+id/settings_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:paddingTop="8dp"
+        android:paddingLeft="12dp"
+        android:paddingRight="12dp"
+        android:singleLine="true"
+        android:textSize="18sp"
+        android:fontFamily="@string/font_ember_regular"/>
+</LinearLayout>

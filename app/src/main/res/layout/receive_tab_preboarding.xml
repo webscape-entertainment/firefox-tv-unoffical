@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This Source Code Form is subject to the terms of the Mozilla Public
+   - License, v. 2.0. If a copy of the MPL was not distributed with this
+   - file, You can obtain one at http://mozilla.org/MPL/2.0/. -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/pocket_onboarding_background">
+
+    <TextView
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:text="@string/fxa_preboarding_header"
+        android:textColor="@color/photonGrey10"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/receiveTabGraphic"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="76dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="76dp"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/fxa_preboarding_image_a11y"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleText"
+        app:srcCompat="@drawable/receive_tabs_preboarding" />
+
+    <!-- Text set programmatically -->
+    <TextView
+        android:id="@+id/descriptionText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="32dp"
+        android:fontFamily="@string/font_ember_regular"
+        android:textColor="@color/photonGrey10_a80p"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/receiveTabGraphic" />
+
+    <Button
+        android:id="@+id/buttonSignIn"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="56dp"
+        android:background="@drawable/turbo_button_enable"
+        android:fontFamily="@string/font_ember_regular"
+        android:minWidth="@dimen/onboarding_button_width"
+        android:minHeight="@dimen/onboarding_button_height"
+        android:text="@string/fxa_preboarding_primary_button"
+        android:textAllCaps="false"
+        android:textColor="@color/photonGrey10"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@id/buttonNotNow"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/descriptionText">
+
+        <requestFocus />
+    </Button>
+
+    <Button
+        android:id="@+id/buttonNotNow"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/turbo_button_disable"
+        android:fontFamily="@string/font_ember_regular"
+        android:minWidth="@dimen/onboarding_button_width"
+        android:minHeight="@dimen/onboarding_button_height"
+        android:text="@string/fxa_preboarding_secondary_button"
+        android:textAllCaps="false"
+        android:textColor="@color/photonGrey10"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toEndOf="@id/buttonSignIn"
+        app:layout_constraintTop_toTopOf="@id/buttonSignIn" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
