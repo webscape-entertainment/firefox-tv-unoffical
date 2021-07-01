@@ -13,7 +13,7 @@ android {
     compileSdkVersion Config.compileSdkVersion
 
     defaultConfig {
-        applicationId "org.mozilla.webscape.tv.firefox"
+        applicationId "org.mozilla.tv.firefox"
         minSdkVersion Config.minSdkVersion
         compileSdkVersion Config.targetSdkVersion
         targetSdkVersion Config.targetSdkVersion
@@ -181,6 +181,7 @@ dependencies {
 
     implementation Deps.mozilla_ui_autocomplete
     implementation Deps.mozilla_ui_colors
+    implementation Deps.mozilla_ui_fonts
     implementation Deps.mozilla_ui_icons
     implementation Deps.mozilla_ui_tabcounter
 
