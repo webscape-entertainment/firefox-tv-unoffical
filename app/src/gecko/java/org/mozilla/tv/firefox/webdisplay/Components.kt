@@ -22,6 +22,7 @@ import mozilla.components.lib.crash.handler.CrashHandlerService
 import mozilla.components.support.base.log.Log
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
+import org.mozilla.tv.firefox.BuildConfig
 
 /**
  * Helper class for lazily instantiating components needed by the application.
@@ -55,7 +56,7 @@ class Components(private val applicationContext: Context) : DefaultComponents(ap
             throw IllegalStateException("Unable find package details for Focus", e)
         }
 
-        val geckoVersion = appVersion.split("-")[1].split(".")[0]
+        val geckoVersion = "${org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION}"
         uaBuilder.append(" Gecko/" + geckoVersion)
         uaBuilder.append(" Firefox/" + geckoVersion)
         uaBuilder.append(" " + appName + "/" + appVersion)
