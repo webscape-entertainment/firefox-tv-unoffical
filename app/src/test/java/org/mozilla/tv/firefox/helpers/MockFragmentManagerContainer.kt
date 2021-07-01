@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentManager
 import io.mockk.every
 import io.mockk.mockk
 import org.mozilla.tv.firefox.navigationoverlay.NavigationOverlayFragment
-import org.mozilla.tv.firefox.webrender.WebRenderFragment
+import org.mozilla.tv.firefox.webdisplay.WebDisplayFragment
 
 /**
  * A data container for a mocked [FragmentManager] which returns fragments specific to this app,
@@ -17,7 +17,7 @@ import org.mozilla.tv.firefox.webrender.WebRenderFragment
 class MockFragmentManagerContainer {
 
     val navigationOverlayFragment: NavigationOverlayFragment = mockk(relaxed = true)
-    val webRenderFragment: WebRenderFragment = mockk(relaxed = true)
+    val webDisplayFragment: WebDisplayFragment = mockk(relaxed = true)
 
     val fragmentManager: FragmentManager = mockk<FragmentManager>().apply {
         initFindFragmentByTag()
@@ -25,6 +25,6 @@ class MockFragmentManagerContainer {
 
     private fun FragmentManager.initFindFragmentByTag() {
         every { findFragmentByTag(NavigationOverlayFragment.FRAGMENT_TAG) } returns navigationOverlayFragment
-        every { findFragmentByTag(WebRenderFragment.FRAGMENT_TAG) } returns webRenderFragment
+        every { findFragmentByTag(WebDisplayFragment.FRAGMENT_TAG) } returns webDisplayFragment
     }
 }

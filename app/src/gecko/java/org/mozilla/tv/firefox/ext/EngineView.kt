@@ -17,7 +17,7 @@ import org.mozilla.tv.firefox.ext.Js.JS_OBSERVE_PLAYBACK_STATE
 import org.mozilla.tv.firefox.ext.Js.PAUSE_VIDEO
 import org.mozilla.tv.firefox.ext.Js.RESTORE_JS
 import org.mozilla.tv.firefox.utils.Direction
-import org.mozilla.tv.firefox.webrender.FocusedDOMElementCache
+import org.mozilla.tv.firefox.webdisplay.FocusedDOMElementCache
 import java.util.WeakHashMap
 
 // Extension methods on the EngineView class. This is used for additional features that are not part

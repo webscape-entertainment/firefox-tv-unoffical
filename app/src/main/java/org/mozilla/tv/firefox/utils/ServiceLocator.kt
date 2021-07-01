@@ -19,7 +19,7 @@ import org.mozilla.tv.firefox.channels.pinnedtile.PinnedTileImageUtilWrapper
 import org.mozilla.tv.firefox.channels.pinnedtile.PinnedTileRepo
 import org.mozilla.tv.firefox.experiments.ExperimentsProvider
 import org.mozilla.tv.firefox.ext.getAccessibilityManager
-import org.mozilla.tv.firefox.ext.webRenderComponents
+import org.mozilla.tv.firefox.ext.webDisplayComponents
 import org.mozilla.tv.firefox.framework.FrameworkRepo
 import org.mozilla.tv.firefox.fxa.ADMIntegration
 import org.mozilla.tv.firefox.fxa.FxaLoginUseCase
@@ -27,8 +27,8 @@ import org.mozilla.tv.firefox.fxa.FxaRepo
 import org.mozilla.tv.firefox.search.SearchEngineManagerFactory
 import org.mozilla.tv.firefox.session.SessionRepo
 import org.mozilla.tv.firefox.settings.SettingsRepo
-import org.mozilla.tv.firefox.webrender.EngineViewCache
-import org.mozilla.tv.firefox.webrender.cursor.CursorModel
+import org.mozilla.tv.firefox.webdisplay.EngineViewCache
+import org.mozilla.tv.firefox.webdisplay.cursor.CursorModel
 
 /**
  * Implementation of the Service Locator pattern. Use this class to provide dependencies without
@@ -70,8 +70,8 @@ open class ServiceLocator(val app: Application) {
     val viewModelFactory by lazy { ViewModelFactory(this, app) }
     val screenController by lazy { ScreenController(sessionRepo) }
     val engineViewCache by lazy { EngineViewCache(sessionRepo) }
-    val sessionManager get() = app.webRenderComponents.sessionManager
-    val sessionUseCases get() = app.webRenderComponents.sessionUseCases
+    val sessionManager get() = app.webDisplayComponents.sessionManager
+    val sessionUseCases get() = app.webDisplayComponents.sessionUseCases
     val searchEngineManager by lazy { SearchEngineManagerFactory.create(app) }
     val cursorModel by lazy { CursorModel(screenController.currentActiveScreen, frameworkRepo, sessionRepo) }
     val screenshotStoreWrapper by lazy { PinnedTileImageUtilWrapper(app) }

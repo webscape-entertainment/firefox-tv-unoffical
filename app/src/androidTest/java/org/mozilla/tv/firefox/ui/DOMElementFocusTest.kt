@@ -15,7 +15,7 @@ import org.mozilla.tv.firefox.helpers.AndroidAssetDispatcher
 import org.mozilla.tv.firefox.helpers.MainActivityTestRule
 import org.mozilla.tv.firefox.ui.robots.BrowserRobot
 import org.mozilla.tv.firefox.ui.robots.navigationOverlay
-import org.mozilla.tv.firefox.webrender.FocusedDOMElementCacheInterface
+import org.mozilla.tv.firefox.webdisplay.FocusedDOMElementCacheInterface
 
 /**
  * Ensures that, if the EngineView loses and regains focus, the focused DOM element maintains focus.

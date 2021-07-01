@@ -18,7 +18,7 @@ import org.mozilla.tv.firefox.ext.isYoutubeTV
 import org.mozilla.tv.firefox.ext.toUri
 import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.TurboMode
-import org.mozilla.tv.firefox.webrender.EngineViewCache
+import org.mozilla.tv.firefox.webdisplay.EngineViewCache
 
 /**
  * Repository that is responsible for storing state related to the browser.

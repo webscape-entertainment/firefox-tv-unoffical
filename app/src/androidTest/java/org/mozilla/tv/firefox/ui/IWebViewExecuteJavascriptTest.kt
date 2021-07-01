@@ -23,7 +23,7 @@ import org.junit.Test
 import org.mozilla.tv.firefox.R
 import org.mozilla.tv.firefox.ext.evalJS
 import org.mozilla.tv.firefox.helpers.MainActivityTestRule
-import org.mozilla.tv.firefox.webrender.WebRenderFragment
+import org.mozilla.tv.firefox.webdisplay.WebDisplayFragment
 
 /** An integration test to verify [IWebView.executeJS] works correctly. */
 class IWebViewExecuteJavascriptTest {
@@ -53,7 +53,7 @@ class IWebViewExecuteJavascriptTest {
         // Inject JS.
         val expectedChangedText = "Changed"
         val browserFragment = activityTestRule.activity.supportFragmentManager.findFragmentByTag(
-                WebRenderFragment.FRAGMENT_TAG) as WebRenderFragment
+                WebDisplayFragment.FRAGMENT_TAG) as WebDisplayFragment
         val engineView = browserFragment.engineView!!
         activityTestRule.runOnUiThread {
             engineView.evalJS(

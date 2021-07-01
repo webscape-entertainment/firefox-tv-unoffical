@@ -9,12 +9,12 @@ import io.reactivex.Observable
 import org.mozilla.tv.firefox.hint.HintContent
 import org.mozilla.tv.firefox.hint.HintViewModel
 import org.mozilla.tv.firefox.session.SessionRepo
-import org.mozilla.tv.firefox.webrender.WebRenderHintViewModel
+import org.mozilla.tv.firefox.webdisplay.WebDisplayHintViewModel
 
 /**
  * Contains business logic for, and exposes data to the hint bar.
  *
- * Although the exposed data is the same between this and [WebRenderHintViewModel],
+ * Although the exposed data is the same between this and [WebDisplayHintViewModel],
  * the business logic, dependencies, and API are all substantially different. As
  * the exposed data is the most trivial part of the implementation, these were
  * broken into two classes.

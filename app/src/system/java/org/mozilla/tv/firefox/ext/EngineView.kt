@@ -25,7 +25,7 @@ import org.mozilla.tv.firefox.ext.Js.RESTORE_JS
 import org.mozilla.tv.firefox.ext.Js.SIDEBAR_FOCUSED
 import org.mozilla.tv.firefox.utils.Direction
 import org.mozilla.tv.firefox.utils.URLs
-import org.mozilla.tv.firefox.webrender.FocusedDOMElementCache
+import org.mozilla.tv.firefox.webdisplay.FocusedDOMElementCache
 import java.util.WeakHashMap
 
 // Extension methods on the EngineView class. This is used for additional features that are not part
@@ -294,7 +294,7 @@ private fun getOrPutExtension(engineView: EngineView): EngineViewExtension {
 private class EngineViewExtension(private val engineView: EngineView) {
     val domElementCache: FocusedDOMElementCache = FocusedDOMElementCache(engineView)
 
-    private val sessionManager: SessionManager = engineView.asView().context.webRenderComponents.sessionManager
+    private val sessionManager: SessionManager = engineView.asView().context.webDisplayComponents.sessionManager
 
     /**
      * Extract the wrapped WebView from the EngineSession. This is a temporary workaround until all required functionality has

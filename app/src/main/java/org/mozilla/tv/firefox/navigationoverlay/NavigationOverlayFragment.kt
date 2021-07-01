@@ -185,13 +185,13 @@ class NavigationOverlayFragment : Fragment() {
 
         // TODO: Add back in once #1666 is ready to land.
         /*
-        // Handle split overlay state on homescreen or webrender
+        // Handle split overlay state on homescreen or webdisplay
         FirefoxViewModelProviders.of(this@NavigationOverlayFragment)
                 .get(NavigationOverlayViewModel::class.java)
                 .apply {
                     viewIsSplit.observe(viewLifecycleOwner, Observer { isSplit ->
                         isSplit ?: return@Observer
-                        val windowSpacerHeight = if (isSplit) OVERLAY_SPACER_WEBRENDER_HEIGHT else OVERLAY_SPACER_HOMESCREEN_HEIGHT
+                        val windowSpacerHeight = if (isSplit) OVERLAY_SPACER_WEBDISPLAY_HEIGHT else OVERLAY_SPACER_HOMESCREEN_HEIGHT
                         overlayWindowSpacer.apply {
                             layoutParams.height = windowSpacerHeight
                             requestLayout()
@@ -481,7 +481,7 @@ class NavigationOverlayFragment : Fragment() {
  * this seems fine.
  */
 private const val OVERLAY_SPACER_HOMESCREEN_HEIGHT = 393
-private const val OVERLAY_SPACER_WEBRENDER_HEIGHT = 800
+private const val OVERLAY_SPACER_WEBDISPLAY_HEIGHT = 800
 class BrowserNavigationOverlayScrollView(
     context: Context,
     attrs: AttributeSet

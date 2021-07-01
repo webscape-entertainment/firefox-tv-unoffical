@@ -26,7 +26,7 @@ import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.telemetry.UrlTextInputLocation
 import org.mozilla.tv.firefox.utils.URLs
 import org.mozilla.tv.firefox.utils.UrlUtils
-import org.mozilla.tv.firefox.webrender.WebRenderFragment
+import org.mozilla.tv.firefox.webdisplay.WebDisplayFragment
 import org.mozilla.tv.firefox.widget.InlineAutocompleteEditText
 
 class ScreenController(private val sessionRepo: SessionRepo) {
@@ -47,10 +47,10 @@ class ScreenController(private val sessionRepo: SessionRepo) {
      * don't end up mixing backstack actions with show/hide.
      */
     fun setUpFragmentsForNewSession(fragmentManager: FragmentManager, session: Session) {
-        val renderFragment = WebRenderFragment.createForSession(session)
+        val renderFragment = WebDisplayFragment.createForSession(session)
         fragmentManager
             .beginTransaction()
-            .add(R.id.container_web_render, renderFragment, WebRenderFragment.FRAGMENT_TAG)
+            .add(R.id.container_web_render, renderFragment, WebDisplayFragment.FRAGMENT_TAG)
             // We add NavigationOverlayFragment last so that it takes focus
             .add(R.id.container_navigation_overlay, NavigationOverlayFragment(), NavigationOverlayFragment.FRAGMENT_TAG)
             .commitNow()
@@ -108,8 +108,8 @@ class ScreenController(private val sessionRepo: SessionRepo) {
 
     fun showBrowserScreenForUrl(fragmentManager: FragmentManager, url: String) {
         handleTransitionAndUpdateActiveScreen(fragmentManager, Transition.SHOW_BROWSER)
-        val webRenderFragment = fragmentManager.webRenderFragment()
-        webRenderFragment.loadUrl(url)
+        val webDisplayFragment = fragmentManager.webDisplayFragment()
+        webDisplayFragment.loadUrl(url)
     }
 
     fun showNavigationOverlay(fragmentManager: FragmentManager?, toShow: Boolean) {
@@ -161,7 +161,7 @@ class ScreenController(private val sessionRepo: SessionRepo) {
 
         return when (currentActiveScreen) {
             ScreenControllerStateMachine.ActiveScreen.WEB_RENDER ->
-                fragmentManager.webRenderFragment().dispatchKeyEvent(keyEvent)
+                fragmentManager.webDisplayFragment().dispatchKeyEvent(keyEvent)
             ScreenControllerStateMachine.ActiveScreen.NAVIGATION_OVERLAY ->
                 fragmentManager.navigationOverlayFragment().dispatchKeyEvent(keyEvent)
 
@@ -264,8 +264,8 @@ class ScreenController(private val sessionRepo: SessionRepo) {
     }
 }
 
-private fun FragmentManager.webRenderFragment(): WebRenderFragment =
-    this.findFragmentByTag(WebRenderFragment.FRAGMENT_TAG) as WebRenderFragment
+private fun FragmentManager.webDisplayFragment(): WebDisplayFragment =
+    this.findFragmentByTag(WebDisplayFragment.FRAGMENT_TAG) as WebDisplayFragment
 
 private fun FragmentManager.navigationOverlayFragment(): NavigationOverlayFragment =
     this.findFragmentByTag(NavigationOverlayFragment.FRAGMENT_TAG) as NavigationOverlayFragment

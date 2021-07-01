@@ -44,16 +44,16 @@ class ScreenControllerTest {
                 controller.dispatchKeyEvent(keyEvent, fragmentContainer.fragmentManager, activeScreen)
 
                 verify(exactly = 0) { fragmentContainer.navigationOverlayFragment.dispatchKeyEvent(any()) }
-                verify(exactly = 0) { fragmentContainer.webRenderFragment.dispatchKeyEvent(any()) }
+                verify(exactly = 0) { fragmentContainer.webDisplayFragment.dispatchKeyEvent(any()) }
             }
         }
     }
 
     @Test
-    fun `GIVEN the WebRenderFragment is active WHEN non-menu KeyEvents are received THEN dispatchKeyEvent is called on the WebRenderFragment`() {
+    fun `GIVEN the WebDisplayFragment is active WHEN non-menu KeyEvents are received THEN dispatchKeyEvent is called on the WebDisplayFragment`() {
         getNonMenuKeyEvents().forEach { keyEvent ->
             controller.dispatchKeyEvent(keyEvent, fragmentContainer.fragmentManager, ActiveScreen.WEB_RENDER)
-            verify { fragmentContainer.webRenderFragment.dispatchKeyEvent(keyEvent) }
+            verify { fragmentContainer.webDisplayFragment.dispatchKeyEvent(keyEvent) }
         }
     }
 

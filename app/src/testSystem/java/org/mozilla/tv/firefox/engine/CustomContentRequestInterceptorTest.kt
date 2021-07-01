@@ -17,7 +17,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
-import org.mozilla.tv.firefox.webrender.CustomContentRequestInterceptor
+import org.mozilla.tv.firefox.webdisplay.CustomContentRequestInterceptor
 import org.mozilla.tv.firefox.helpers.FirefoxRobolectricTestRunner
 
 @RunWith(FirefoxRobolectricTestRunner::class)

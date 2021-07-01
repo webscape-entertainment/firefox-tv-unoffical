@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import mozilla.components.support.base.observer.Consumable
 import org.mozilla.tv.firefox.session.SessionRepo
 import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
-import org.mozilla.tv.firefox.webrender.EngineViewCache
+import org.mozilla.tv.firefox.webdisplay.EngineViewCache
 
 class SettingsViewModel(
     private val settingsRepo: SettingsRepo,

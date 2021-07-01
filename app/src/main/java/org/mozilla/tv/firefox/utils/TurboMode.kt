@@ -7,7 +7,7 @@ package org.mozilla.tv.firefox.utils
 import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import org.mozilla.tv.firefox.ext.webRenderComponents
+import org.mozilla.tv.firefox.ext.webDisplayComponents
 
 /**
  * Facade hiding the ceremony needed to setEnabled Turbo Mode.
@@ -23,8 +23,8 @@ class TurboMode(private val app: Application) {
             settings.isBlockingEnabled = enabled
 
             // Update TrackingProtectionPolicy for both current session and EngineSettings
-            val engineSettings = app.webRenderComponents.engine.settings
-            val engineSession = app.webRenderComponents.sessionManager.getOrCreateEngineSession()
+            val engineSettings = app.webDisplayComponents.engine.settings
+            val engineSession = app.webDisplayComponents.sessionManager.getOrCreateEngineSession()
             if (enabled) {
                 engineSettings.trackingProtectionPolicy = settings.trackingProtectionPolicy
                 engineSession.enableTrackingProtection(settings.trackingProtectionPolicy)

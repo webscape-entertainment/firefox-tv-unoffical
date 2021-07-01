@@ -22,9 +22,9 @@ import mozilla.components.support.ktx.android.os.resetAfter
 import mozilla.components.support.rusthttp.RustHttpConfig
 import org.mozilla.tv.firefox.GleanMetrics.LegacyIds
 import org.mozilla.tv.firefox.components.locale.LocaleAwareApplication
-import org.mozilla.tv.firefox.ext.webRenderComponents
+import org.mozilla.tv.firefox.ext.webDisplayComponents
 import org.mozilla.tv.firefox.telemetry.SentryIntegration
-import org.mozilla.tv.firefox.webrender.VisibilityLifeCycleCallback
+import org.mozilla.tv.firefox.webdisplay.VisibilityLifeCycleCallback
 import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.BuildConstants
 import org.mozilla.tv.firefox.utils.OkHttpWrapper

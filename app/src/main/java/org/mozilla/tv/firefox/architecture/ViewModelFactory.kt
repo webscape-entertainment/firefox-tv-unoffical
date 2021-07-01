@@ -16,8 +16,8 @@ import org.mozilla.tv.firefox.navigationoverlay.OverlayHintViewModel
 import org.mozilla.tv.firefox.navigationoverlay.ToolbarViewModel
 import org.mozilla.tv.firefox.settings.SettingsViewModel
 import org.mozilla.tv.firefox.utils.ServiceLocator
-import org.mozilla.tv.firefox.webrender.WebRenderHintViewModel
-import org.mozilla.tv.firefox.webrender.WebRenderViewModel
+import org.mozilla.tv.firefox.webdisplay.WebDisplayHintViewModel
+import org.mozilla.tv.firefox.webdisplay.WebDisplayViewModel
 
 /**
  * Used by [ViewModelProviders] to instantiate [ViewModel]s with constructor arguments.
@@ -72,14 +72,14 @@ class ViewModelFactory(
                 hintContentFactory.getCloseMenuHint()
             ) as T
 
-            WebRenderHintViewModel::class.java -> WebRenderHintViewModel(
+            WebDisplayHintViewModel::class.java -> WebDisplayHintViewModel(
                 serviceLocator.sessionRepo,
                 serviceLocator.cursorModel,
                 serviceLocator.screenController,
                 hintContentFactory.getOpenMenuHint()
             ) as T
 
-            WebRenderViewModel::class.java -> WebRenderViewModel(
+            WebDisplayViewModel::class.java -> WebDisplayViewModel(
                 serviceLocator.screenController,
                 serviceLocator.fxaLoginUseCase
             ) as T
