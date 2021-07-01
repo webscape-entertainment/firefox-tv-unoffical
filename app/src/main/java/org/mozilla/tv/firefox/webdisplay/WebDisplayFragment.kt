@@ -43,12 +43,12 @@ import org.mozilla.tv.firefox.ext.isYoutubeTV
 import org.mozilla.tv.firefox.ext.maybeGoBackBeforeFxaSignIn
 import org.mozilla.tv.firefox.ext.observeScrollPosition
 import org.mozilla.tv.firefox.ext.pauseAllVideoPlaybacks
-import org.mozilla.tv.firefox.ext.requireWebDisplayComponents
+import org.mozilla.tv.firefox.ext.requireComponents
 import org.mozilla.tv.firefox.ext.resetView
 import org.mozilla.tv.firefox.ext.scrollByClamped
 import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.ext.updateFullscreenScrollPosition
-import org.mozilla.tv.firefox.ext.webDisplayComponents
+import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.hint.HintBinder
 import org.mozilla.tv.firefox.hint.InactiveHintViewModel
 import org.mozilla.tv.firefox.session.SessionRepo
@@ -101,7 +101,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
     private fun initSession() {
         val sessionUUID = arguments?.getString(ARGUMENT_SESSION_UUID)
                 ?: throw IllegalAccessError("No session exists")
-        session = context!!.webDisplayComponents.sessionManager.findSessionById(sessionUUID) ?: NullSession.create()
+        session = context!!.components.sessionManager.findSessionById(sessionUUID) ?: NullSession.create()
         session.register(observer = this, owner = this)
     }
 
@@ -141,7 +141,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
     }
 
     override fun onDesktopModeChanged(session: Session, enabled: Boolean) {
-        requireWebDisplayComponents.sessionUseCases.requestDesktopSite.invoke(enabled, session)
+        requireComponents.sessionUseCases.requestDesktopSite.invoke(enabled, session)
     }
 
     override fun onContentPermissionRequested(session: Session, permissionRequest: PermissionRequest): Boolean =
@@ -216,7 +216,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
          * its associated [EngineSession.webview]. We need make sure to load initialUrl after
          * WebView sets its WebViewClient (which happens during EngineView.render())
          */
-        requireWebDisplayComponents.sessionManager.getOrCreateEngineSession().loadUrl(session.url)
+        requireComponents.sessionManager.getOrCreateEngineSession().loadUrl(session.url)
         serviceLocator!!.sessionRepo.events.subscribe {
             when (it) {
                 SessionRepo.Event.YouTubeBack -> youtubeBackHandler.onBackPressed()
@@ -286,15 +286,15 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
 
     fun loadUrl(url: String) {
         if (url.isNotEmpty()) {
-            val session = requireWebDisplayComponents.sessionManager.selectedSession
+            val session = requireComponents.sessionManager.selectedSession
 
             if (session != null) {
                 // We already have an active session, let's just load the URL.
-                requireWebDisplayComponents.sessionUseCases.loadUrl.invoke(url)
+                requireComponents.sessionUseCases.loadUrl.invoke(url)
             } else {
                 // There's no session (anymore). Let's create a new one.
-                requireWebDisplayComponents.sessionManager.add(Session(url), selected = true)
-                requireWebDisplayComponents.sessionManager.getOrCreateEngineSession().resetView(activity!!)
+                requireComponents.sessionManager.add(Session(url), selected = true)
+                requireComponents.sessionManager.getOrCreateEngineSession().resetView(activity!!)
             }
         }
     }

@@ -8,7 +8,7 @@ package org.mozilla.tv.firefox.utils
 import android.content.Context
 import mozilla.components.concept.engine.request.RequestInterceptor
 import org.mozilla.tv.firefox.BuildConfig
-import org.mozilla.tv.firefox.ext.webDisplayComponents
+import org.mozilla.tv.firefox.ext.components
 
 /**
  * Provides build flavor specific tasks
@@ -25,7 +25,7 @@ class BuildFlavor {
     }
 
     fun getEngineVersion(context: Context): String {
-        val userAgent = context.webDisplayComponents.engine.settings.userAgentString
+        val userAgent = context.components.engine.settings.userAgentString
         // Fetch chromium version from user agent with regex (match Chrome + its predecessor
         // and end when one or more space) (i.e. "Chrome/{Version} {s}"
         val regex = "Chrome[^\\s]+".toRegex()

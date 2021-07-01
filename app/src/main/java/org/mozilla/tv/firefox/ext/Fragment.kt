@@ -5,12 +5,12 @@
 package org.mozilla.tv.firefox.ext
 
 import androidx.fragment.app.Fragment
-import org.mozilla.tv.firefox.webdisplay.WebDisplayComponents
+import org.mozilla.tv.firefox.webdisplay.Components
 
 /**
  * Get the components of this application's context.
  *
  * @throws IllegalStateException if not currently associated with a context.
  */
-val Fragment.requireWebDisplayComponents: WebDisplayComponents
-    get() = requireContext().webDisplayComponents
+val Fragment.requireComponents: Components
+    get() = requireContext().components

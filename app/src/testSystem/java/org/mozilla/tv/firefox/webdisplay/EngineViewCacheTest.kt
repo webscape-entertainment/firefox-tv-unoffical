@@ -25,7 +25,7 @@ class EngineViewCacheTest {
 
     @Before
     fun setup() {
-        // A fake user agent is required in order to instantiate WebDisplayComponents.engine in a test
+        // A fake user agent is required in order to instantiate Components.engine in a test
         SystemEngine.defaultUserAgent = "test-ua-string"
         engineViewCache = EngineViewCache(mock(SessionRepo::class.java))
     }

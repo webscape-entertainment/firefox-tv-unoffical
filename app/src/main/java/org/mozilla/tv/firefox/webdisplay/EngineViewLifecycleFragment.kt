@@ -18,7 +18,7 @@ import org.mozilla.tv.firefox.components.locale.LocaleAwareFragment
 import org.mozilla.tv.firefox.components.locale.LocaleManager
 import org.mozilla.tv.firefox.ext.onPauseIfNotNull
 import org.mozilla.tv.firefox.ext.onResumeIfNotNull
-import org.mozilla.tv.firefox.ext.requireWebDisplayComponents
+import org.mozilla.tv.firefox.ext.requireComponents
 import java.util.Locale
 
 /**
@@ -60,8 +60,8 @@ abstract class EngineViewLifecycleFragment : LocaleAwareFragment() {
         // instances)
         engineView = (view.findViewById<View>(R.id.engineView) as EngineView).apply {
             sessionFeature = SessionFeature(
-                    requireWebDisplayComponents.sessionManager,
-                    requireWebDisplayComponents.sessionUseCases,
+                    requireComponents.sessionManager,
+                    requireComponents.sessionUseCases,
                     this)
         }
     }

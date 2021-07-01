@@ -15,7 +15,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import mozilla.components.browser.engine.gecko.GeckoEngineView
 import org.mozilla.tv.firefox.ext.canGoBackTwice
-import org.mozilla.tv.firefox.ext.webDisplayComponents
+import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.session.SessionRepo
 
 /**
@@ -63,7 +63,7 @@ class EngineViewCache(private val sessionRepo: SessionRepo) : LifecycleObserver 
 
         fun createAndCacheEngineView(): GeckoEngineView {
             // This will need to be updated for GeckoView.
-            val engineView = context.webDisplayComponents.engine.createView(context, attrs) as GeckoEngineView
+            val engineView = context.components.engine.createView(context, attrs) as GeckoEngineView
             return engineView.apply {
                 initialize()
             }.also {

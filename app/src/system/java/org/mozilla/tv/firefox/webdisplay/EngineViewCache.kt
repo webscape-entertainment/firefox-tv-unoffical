@@ -17,7 +17,7 @@ import mozilla.components.browser.engine.system.SystemEngineView
 import org.mozilla.tv.firefox.ext.canGoBackTwice
 import org.mozilla.tv.firefox.ext.restoreState
 import org.mozilla.tv.firefox.ext.saveState
-import org.mozilla.tv.firefox.ext.webDisplayComponents
+import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.session.SessionRepo
 
 /**
@@ -65,7 +65,7 @@ class EngineViewCache(private val sessionRepo: SessionRepo) : LifecycleObserver 
 
         fun createAndCacheEngineView(): SystemEngineView {
             // This will need to be updated for GeckoView.
-            val engineView = context.webDisplayComponents.engine.createView(context, attrs) as SystemEngineView
+            val engineView = context.components.engine.createView(context, attrs) as SystemEngineView
             return engineView.apply {
                 state?.let { this.restoreState(it) }
                 initialize()

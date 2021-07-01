@@ -294,7 +294,7 @@ private fun getOrPutExtension(engineView: EngineView): EngineViewExtension {
 private class EngineViewExtension(private val engineView: EngineView) {
     val domElementCache: FocusedDOMElementCache = FocusedDOMElementCache(engineView)
 
-    private val sessionManager: SessionManager = engineView.asView().context.webDisplayComponents.sessionManager
+    private val sessionManager: SessionManager = engineView.asView().context.components.sessionManager
 
     /**
      * Extract the wrapped WebView from the EngineSession. This is a temporary workaround until all required functionality has

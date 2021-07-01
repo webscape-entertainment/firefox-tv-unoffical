@@ -120,7 +120,7 @@ class ExternalAppBrowserFragment : BaseBrowserFragment(), UserInteractionHandler
         super.onBackPressed() || customTabsIntegration.onBackPressed()
 
     companion object {
-        private const val ARG_TRUSTED_SCOPES = "org.mozilla.samples.browser.TRUSTED_SCOPES"
+        private const val ARG_TRUSTED_SCOPES = "org.mozilla.tv.firefox.TRUSTED_SCOPES"
 
         fun create(
             sessionId: String,

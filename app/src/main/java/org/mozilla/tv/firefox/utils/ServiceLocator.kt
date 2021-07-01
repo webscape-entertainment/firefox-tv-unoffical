@@ -19,7 +19,7 @@ import org.mozilla.tv.firefox.channels.pinnedtile.PinnedTileImageUtilWrapper
 import org.mozilla.tv.firefox.channels.pinnedtile.PinnedTileRepo
 import org.mozilla.tv.firefox.experiments.ExperimentsProvider
 import org.mozilla.tv.firefox.ext.getAccessibilityManager
-import org.mozilla.tv.firefox.ext.webDisplayComponents
+import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.framework.FrameworkRepo
 import org.mozilla.tv.firefox.fxa.ADMIntegration
 import org.mozilla.tv.firefox.fxa.FxaLoginUseCase
@@ -70,8 +70,8 @@ open class ServiceLocator(val app: Application) {
     val viewModelFactory by lazy { ViewModelFactory(this, app) }
     val screenController by lazy { ScreenController(sessionRepo) }
     val engineViewCache by lazy { EngineViewCache(sessionRepo) }
-    val sessionManager get() = app.webDisplayComponents.sessionManager
-    val sessionUseCases get() = app.webDisplayComponents.sessionUseCases
+    val sessionManager get() = app.components.sessionManager
+    val sessionUseCases get() = app.components.sessionUseCases
     val searchEngineManager by lazy { SearchEngineManagerFactory.create(app) }
     val cursorModel by lazy { CursorModel(screenController.currentActiveScreen, frameworkRepo, sessionRepo) }
     val screenshotStoreWrapper by lazy { PinnedTileImageUtilWrapper(app) }

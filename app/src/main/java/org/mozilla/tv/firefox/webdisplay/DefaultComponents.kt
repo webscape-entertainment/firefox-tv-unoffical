@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-package org.mozilla.samples.browser
+package org.mozilla.tv.firefox.webdisplay
 
 import android.content.Context
 import android.content.Intent
@@ -76,15 +76,15 @@ import mozilla.components.lib.publicsuffixlist.PublicSuffixList
 import mozilla.components.service.digitalassetlinks.local.StatementApi
 import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
-import org.mozilla.samples.browser.addons.AddonsActivity
-import org.mozilla.samples.browser.autofill.AutofillConfirmActivity
-import org.mozilla.samples.browser.autofill.AutofillSearchActivity
-import org.mozilla.samples.browser.autofill.AutofillUnlockActivity
-import org.mozilla.samples.browser.downloads.DownloadService
-import org.mozilla.samples.browser.ext.components
-import org.mozilla.samples.browser.integration.FindInPageIntegration
-import org.mozilla.samples.browser.request.SampleUrlEncodedRequestInterceptor
-import org.mozilla.samples.browser.storage.DummyLoginsStorage
+import org.mozilla.tv.firefox.addons.AddonsActivity
+import org.mozilla.tv.firefox.autofill.AutofillConfirmActivity
+import org.mozilla.tv.firefox.autofill.AutofillSearchActivity
+import org.mozilla.tv.firefox.autofill.AutofillUnlockActivity
+import org.mozilla.tv.firefox.downloads.DownloadService
+import org.mozilla.tv.firefox.ext.components
+import org.mozilla.tv.firefox.integration.FindInPageIntegration
+import org.mozilla.tv.firefox.request.SampleUrlEncodedRequestInterceptor
+import org.mozilla.tv.firefox.storage.DummyLoginsStorage
 import java.util.concurrent.TimeUnit
 
 private const val DAY_IN_MINUTES = 24 * 60L

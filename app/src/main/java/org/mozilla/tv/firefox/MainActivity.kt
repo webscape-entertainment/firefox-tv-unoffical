@@ -31,7 +31,7 @@ import org.mozilla.tv.firefox.ext.application
 import org.mozilla.tv.firefox.ext.resetView
 import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.ext.setupForApp
-import org.mozilla.tv.firefox.ext.webDisplayComponents
+import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.fxa.FxaReceivedTab
 import org.mozilla.tv.firefox.onboarding.OnboardingActivity
 import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
@@ -71,7 +71,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
 
         // The launch intent is needed to create the engines in the engine cache.
         val safeIntent = intent.toSafeIntent()
-        webDisplayComponents.notifyLaunchWithSafeIntent(safeIntent)
+        components.notifyLaunchWithSafeIntent(safeIntent)
 
         lifecycle.addObserver(serviceLocator.engineViewCache)
 
@@ -83,7 +83,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
 
         val session = getOrCreateSession(intentData)
 
-        webDisplayComponents.sessionManager.getOrCreateEngineSession().resetView(this@MainActivity)
+        components.sessionManager.getOrCreateEngineSession().resetView(this@MainActivity)
 
         val screenController = serviceLocator.screenController
         screenController.setUpFragmentsForNewSession(supportFragmentManager, session)
@@ -123,11 +123,11 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
      * If a new [Session] is created, this also adds it to the SessionManager and selects it
      */
     private fun getOrCreateSession(intentData: ValidatedIntentData?): Session {
-        return webDisplayComponents.sessionManager.selectedSession
+        return components.sessionManager.selectedSession
             ?: Session(
                 initialUrl = intentData?.url ?: URLs.APP_URL_HOME,
                 source = intentData?.source ?: Session.Source.NONE
-            ).also { webDisplayComponents.sessionManager.add(it, selected = true) }
+            ).also { components.sessionManager.add(it, selected = true) }
     }
 
     override fun onNewIntent(unsafeIntent: Intent) {
@@ -220,7 +220,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
     }
 
     override fun onDestroy() {
-        if (webDisplayComponents.sessionManager.size > 0) {
+        if (components.sessionManager.size > 0) {
             /**
              * This is to clear the previously assigned WebView instance from EngineView (which
              * uses ActivityContext) when it's destroyed via [EngineViewCache.onDestroy].
@@ -236,7 +236,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
              *
              * See [EngineSession.resetView] for additional context
              */
-            webDisplayComponents.sessionManager.getEngineSession()?.resetView(applicationContext)
+            components.sessionManager.getEngineSession()?.resetView(applicationContext)
         }
         super.onDestroy()
     }
@@ -253,7 +253,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
         if (serviceLocator.screenController.handleBack(supportFragmentManager)) return
 
         // If you're here that means there's nothing else in the fragment backstack; therefore, clear session
-        webDisplayComponents.sessionManager.remove()
+        components.sessionManager.remove()
 
         super.onBackPressed()
     }
