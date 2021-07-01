@@ -26,6 +26,10 @@ buildscript {
     }
 }
 
+plugins {
+    id("io.gitlab.arturbosch.detekt").version("1.16.0")
+}
+
 allprojects {
     repositories {
         maven {
@@ -51,8 +55,6 @@ task clean(type: Delete) {
 
 dependencies {
     "com.pinterest:ktlint:0.34.2"
-    detekt project(":mozilla-detekt-rules")
-    detekt "io.gitlab.arturbosch.detekt:detekt-cli:${Versions.detekt}"
 }
 
 detekt {

@@ -26,7 +26,7 @@ object Config {
     }
 
     @JvmStatic
-    fun releaseVersionName(project: Project): String {
+    fun releaseVersionName(): String {
         val mainVersion = FirefoxTV.VERSION
         val acVersion = AndroidComponents.VERSION//.split(".")[0]
         return "$mainVersion-$acVersion"

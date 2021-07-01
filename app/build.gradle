@@ -6,21 +6,14 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'findbugs'
-apply plugin: 'jacoco'
-apply plugin: 'pmd'
 apply plugin: 'checkstyle'
-apply plugin: 'kotlin-android-extensions'
 apply from: "$project.rootDir/automation/gradle/versionCode.gradle"
-
-import com.android.build.gradle.internal.tasks.AppPreBuildTask
-import com.android.build.OutputFile
 
 android {
     compileSdkVersion Config.compileSdkVersion
 
     defaultConfig {
-        applicationId "org.mozilla.tv.firefox-unoffical"
+        applicationId "org.mozilla.webscape.tv.firefox"
         minSdkVersion Config.minSdkVersion
         compileSdkVersion Config.targetSdkVersion
         targetSdkVersion Config.targetSdkVersion
@@ -47,10 +40,13 @@ android {
 
     buildFeatures {
         compose true
+        viewBinding true
     }
 
     buildTypes {
         release {
+            //versionCode = 12
+            //versionName Config.releaseVersionName()
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -108,6 +104,7 @@ android {
 
     packagingOptions {
         exclude 'META-INF/atomicfu.kotlin_module'
+        exclude 'META-INF/proguard/androidx-annotations.pro'
     }
 
     bundle {
@@ -222,7 +219,7 @@ dependencies {
 
     implementation Deps.google_material
 
-    androidTestImplementation Deps.uiautomator
+    /* androidTestImplementation Deps.uiautomator
 
     androidTestImplementation Deps.espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
@@ -248,26 +245,7 @@ dependencies {
     androidTestUtil Deps.orchestrator
     androidTestImplementation Deps.espresso_core, {
         exclude group: 'com.android.support', module: 'support-annotations'
-    }
-}
-
-// -------------------------------------------------------------------------------------------------
-// Activating crash reports with command line parameter.
-// -------------------------------------------------------------------------------------------------
-    if (project.hasProperty("crashReportEnabled") && project.property("crashReportEnabled") == "true") {
-        buildConfigField 'boolean', 'CRASH_REPORTING_ENABLED', 'true'
-    } else {
-        buildConfigField 'boolean', 'CRASH_REPORTING_ENABLED', 'false'
-    }
-
-// -------------------------------------------------------------------------------------------------
-// Activating telemetry  with command line paramter.
-// -------------------------------------------------------------------------------------------------
-
-if (project.hasProperty("telemetry") && project.property("telemetry") == "true") {
-    buildConfigField 'boolean', 'TELEMETRY_ENABLED', 'true'
-} else {
-    buildConfigField 'boolean', 'TELEMETRY_ENABLED', 'false'
+    } */
 }
 
 android.applicationVariants.all { variant ->
@@ -275,10 +253,17 @@ android.applicationVariants.all { variant ->
     if (buildType == "release") {
         variant.outputs.all { output ->
             setVersionCodeOverride(generatedVersionCode)
+            setVersionNameOverride(Config.releaseVersionName())
         }
     }
 
-    println("Build type: " + buildType + " (versionCode = " + variant.mergedFlavor.versionCode + ")")
+    //println("----------------------------------------------")
+    //println("Variant name:      " + variant.name)
+    //println("Application ID:    " + [variant.mergedFlavor.applicationId, variant.buildType.applicationIdSuffix].findAll().join())
+    //println("Build type:        " + variant.buildType.name)
+    //println("Flavor:            " + variant.flavorName)
+    //println("Version:           " + variant.versionName)
+    //println("Build Code:        " + variant.versionCode)
 }
 
 // Disable unit tests for gecko since we don't actively support gecko variant for FFTV
@@ -395,31 +380,4 @@ task printVariants {
         ]}
         println 'variants: ' + groovy.json.JsonOutput.toJson(variants)
     }
-}
-
-task printGeckoviewVersion {
-    doLast {
-        def configuration = configurations.implementationDependenciesMetadata
-        def dependencies = configuration.incoming.resolutionResult.allDependencies
-        def geckoviewDependency = dependencies.find { it.selected.id.moduleIdentifier.group == 'org.mozilla.geckoview' }
-        println('geckoviewVersion: ' + groovy.json.JsonOutput.toJson(geckoviewDependency.selected.moduleVersion.version))
-    }
-}
-
-if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopsrcdir')) {
-    if (gradle.hasProperty('localProperties.dependencySubstitutions.geckoviewTopobjdir')) {
-        ext.topobjdir = gradle."localProperties.dependencySubstitutions.geckoviewTopobjdir"
-    }
-    ext.topsrcdir = gradle."localProperties.dependencySubstitutions.geckoviewTopsrcdir"
-    apply from: "${topsrcdir}/substitute-local-geckoview.gradle"
-}
-
-if (gradle.hasProperty('localProperties.autoPublish.android-components.dir')) {
-    ext.acSrcDir = gradle."localProperties.autoPublish.android-components.dir"
-    apply from: "../${acSrcDir}/substitute-local-ac.gradle"
-}
-
-if (gradle.hasProperty('localProperties.autoPublish.application-services.dir')) {
-    ext.appServicesSrcDir = gradle."localProperties.autoPublish.application-services.dir"
-    apply from: "../${appServicesSrcDir}/build-scripts/substitute-local-appservices.gradle"
 }
