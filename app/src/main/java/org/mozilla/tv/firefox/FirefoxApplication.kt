@@ -12,7 +12,6 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import mozilla.appservices.Megazord
 import mozilla.components.concept.engine.utils.EngineVersion
-import mozilla.components.lib.fetch.okhttp.OkHttpClient
 import mozilla.components.service.glean.Glean
 import mozilla.components.service.glean.config.Configuration
 import mozilla.components.support.base.log.Log
@@ -38,11 +37,8 @@ open class FirefoxApplication : LocaleAwareApplication() {
     lateinit var visibilityLifeCycleCallback: VisibilityLifeCycleCallback
         private set
 
-    @VisibleForTesting(otherwise = PRIVATE) // See the TestFirefoxApplication impl for why this method exists.
-    protected open fun getSystemUserAgent(): String = WebSettings.getDefaultUserAgent(this)
-
     // See the TestFirefoxApplication impl for why this method exists.
-    open fun getEngineViewVersion(): EngineVersion = Components.engine.version
+    open fun getEngineVersion(): EngineVersion = Components.engine.version
 
     /**
      * Reference to components needed by the application.
@@ -52,7 +48,7 @@ open class FirefoxApplication : LocaleAwareApplication() {
      * first). Therefore we delay the creation so that the components can access and use the
      * application context at the time they get created.
      */
-    val components by lazy { Components(this, getSystemUserAgent()) }
+    val components by lazy { Components(this) }
     lateinit var serviceLocator: ServiceLocator
 
     override fun onCreate() {
@@ -89,7 +85,8 @@ open class FirefoxApplication : LocaleAwareApplication() {
 
     private fun initRustDependencies() {
         Megazord.init()
-        RustHttpConfig.setClient(lazy { OkHttpClient(OkHttpWrapper.client, this) })
+        RustHttpConfig.setClient(lazy { components.core.client })
+        RustLog.enable(components.analytics.crashReporter)
     }
 
     // This method is used to call Glean.setUploadEnabled. During the tests, this is

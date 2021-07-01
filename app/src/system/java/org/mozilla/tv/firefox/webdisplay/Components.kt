@@ -1,26 +1,36 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
-
-// Suppress for literal UA comment below. detekt doesn't support lower-level annotations
-// for MaxLineLength: https://github.com/arturbosch/detekt/issues/715
-@file:Suppress("MaxLineLength")
-
 package org.mozilla.tv.firefox.webdisplay
 
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.annotation.VisibleForTesting
-import android.text.TextUtils
+import android.webkit.WebSettings
+import mozilla.components.browser.engine.system.SystemEngine
+import mozilla.components.browser.session.SessionManager
+import mozilla.components.concept.engine.DefaultSettings
+import mozilla.components.concept.engine.Engine
+import mozilla.components.feature.session.SessionUseCases
+import mozilla.components.support.utils.SafeIntent
+import org.mozilla.tv.firefox.R
+import org.mozilla.tv.firefox.utils.BuildConstants
+import org.mozilla.tv.firefox.utils.Settings
 
-/** A collection of user agent functionality. */
-object UserAgent {
+/**
+ * Helper class for lazily instantiating components needed by the application.
+ * That is allready set as fallback in main: DefaultComponents
+ */
+class Components(applicationContext: Context) : DefaultComponents(applicationContext) {
+    fun notifyLaunchWithSafeIntent(@Suppress("UNUSED_PARAMETER") safeIntent: SafeIntent): Boolean {
+        // For the system WebView, we don't need the initial launch intent right now.  In the
+        // future, we might configure a proxy server using this intent for automation.
+        return false
+    }
+
     /**
      * Build the browser specific portion of the UA String, based on the webview's existing UA String.
      */
-    @VisibleForTesting
-    internal fun getUABrowserString(existingUAString: String, focusToken: String): String {
+    private fun getUABrowserString(focusToken: String): String {
+        val existingUAString = WebSettings.getDefaultUserAgent(this)
         // Use the default WebView agent string here for everything after the platform, but insert
         // Focus in front of Chrome.
         // E.g. a default webview UA string might be:
@@ -54,8 +64,7 @@ object UserAgent {
         return TextUtils.join(" ", tokens) + " " + focusToken
     }
 
-    @JvmStatic
-    fun buildUserAgentString(context: Context, systemUserAgent: String, appName: String): String {
+    override fun genUserAgent(): String {
         val uaBuilder = StringBuilder()
 
         uaBuilder.append("Mozilla/5.0")
@@ -75,8 +84,8 @@ object UserAgent {
             throw IllegalStateException("Unable find package details for Focus", e)
         }
 
-        val focusToken = appName + "/" + appVersion
-        uaBuilder.append(getUABrowserString(systemUserAgent, focusToken))
+        val focusToken = applicationContext.resources.getString(R.string.useragent_appname) + "/" + appVersion
+        uaBuilder.append(getUABrowserString(focusToken))
 
         return uaBuilder.toString()
     }

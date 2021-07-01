@@ -113,17 +113,16 @@ open class DefaultComponents(private val applicationContext: Context) {
     val preferences: SharedPreferences =
         applicationContext.getSharedPreferences(SAMPLE_BROWSER_PREFERENCES, Context.MODE_PRIVATE)
 
-    fun getUserAgent(): String = UserAgent.buildUserAgentString(
-                applicationContext,
-                systemUserAgent = systemUserAgent,
-                appName = applicationContext.resources.getString(R.string.useragent_appname))
+    // Shoud be fixed to old version of firefox tv
+    fun genUserAgent(): String =
+        "Mozilla/5.0 (Linux; Android 7.1.2) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Focus/2.2.0.2 Chrome/59.0.3071.125 Mobile Safari/537.36"
 
     // Engine Settings
     val engineSettings by lazy {
         DefaultSettings().apply {
             trackingProtectionPolicy = Settings.getInstance(applicationContext).trackingProtectionPolicy,
             requestInterceptor = CustomContentRequestInterceptor(applicationContext),
-            userAgentString = getUserAgent(),
+            userAgentString = genUserAgent(),
 
             displayZoomControls = false,
             loadWithOverviewMode = true, // To respect the html viewport
