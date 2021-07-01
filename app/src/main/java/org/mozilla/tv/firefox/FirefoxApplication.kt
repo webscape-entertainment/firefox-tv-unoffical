@@ -29,7 +29,7 @@ import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.BuildConstants
 import org.mozilla.tv.firefox.utils.OkHttpWrapper
 import org.mozilla.tv.firefox.utils.ServiceLocator
-import org.mozilla.tv.firefox.webrender.WebRenderComponents
+import org.mozilla.tv.firefox.Components
 import java.util.UUID
 
 private const val DEFAULT_LOGTAG = "FFTV"
@@ -42,7 +42,7 @@ open class FirefoxApplication : LocaleAwareApplication() {
     protected open fun getSystemUserAgent(): String = WebSettings.getDefaultUserAgent(this)
 
     // See the TestFirefoxApplication impl for why this method exists.
-    open fun getEngineViewVersion(): EngineVersion = webRenderComponents.engine.version
+    open fun getEngineViewVersion(): EngineVersion = Components.engine.version
 
     /**
      * Reference to components needed by the application.
@@ -52,7 +52,7 @@ open class FirefoxApplication : LocaleAwareApplication() {
      * first). Therefore we delay the creation so that the components can access and use the
      * application context at the time they get created.
      */
-    val components by lazy { WebRenderComponents(this, getSystemUserAgent()) }
+    val components by lazy { Components(this, getSystemUserAgent()) }
     lateinit var serviceLocator: ServiceLocator
 
     override fun onCreate() {

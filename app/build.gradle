@@ -45,8 +45,6 @@ android {
 
     buildTypes {
         release {
-            //versionCode = 12
-            //versionName Config.releaseVersionName()
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -59,12 +57,13 @@ android {
     flavorDimensions "engine"
 
     productFlavors {
-        system {
-            applicationIdSuffix ".system"
+        gecko {
             dimension "engine"
         }
 
-        gecko {
+        // WebView
+        system {
+            applicationIdSuffix ".system"
             dimension "engine"
         }
     }
@@ -219,6 +218,62 @@ dependencies {
     implementation Deps.androidx_compose_material
 
     implementation Deps.google_material
+
+    // from fftv
+
+    /* testImplementation "androidx.arch.core:core-testing:$architecture_components_version"
+
+    testImplementation "androidx.test.ext:junit:$junit"
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
+    testImplementation 'org.mockito:mockito-core:2.24.5'
+    testImplementation "io.mockk:mockk:1.9.1"
+
+    testImplementation "androidx.test:core:$test_core"
+    testImplementation "androidx.work:work-testing:2.0.1" // Required by Glean testing
+    androidTestImplementation "androidx.test:core:$test_core"
+
+    androidTestImplementation "androidx.test.uiautomator:uiautomator:$uiautomator_version"
+
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
+    androidTestImplementation("androidx.test.espresso:espresso-contrib:$espresso_version")
+    androidTestImplementation "androidx.test.espresso:espresso-idling-resource:$espresso_version"
+    androidTestImplementation "androidx.test.espresso:espresso-web:$espresso_version"
+
+    androidTestImplementation "androidx.test:runner:$test_runner"
+    androidTestImplementation "androidx.test:rules:$test_rules"
+    androidTestUtil "androidx.test:orchestrator:$test_orchestrator"
+
+    androidTestImplementation "org.mozilla.components:support-android-test:$moz_components_version"
+    testImplementation "org.mozilla.components:support-test:$moz_components_version"
+    testImplementation "org.mozilla.components:support-test-appservices:$moz_components_version"
+
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.10.0'
+    testImplementation 'com.squareup.okhttp3:mockwebserver:3.10.0'
+
+    // For the initial release of Glean 19, we require consumer applications to
+    // depend on a separate library for unit tests. This will be removed in future releases.
+    testImplementation "org.mozilla.telemetry:glean-forUnitTests:21.3.0"
+
+    androidTestImplementation "tools.fastlane:screengrab:2.0.0", {
+        implementation 'com.jraska:falcon:2.2.0'
+        // This Fastlane dependency causes our builds to fail due to having two different
+        // versions of UiAutomator. Fastlane is not on the most recent version of
+        // com.android.support.test.uiautomator, which presumably prevents Jetifier from
+        // fixing this
+        //
+        // TODO try removing this then running Espresso every time Fastlane is updated
+        exclude group: 'com.android.support.test.uiautomator', module: 'uiautomator-v18'
+    }
+
+    androidTestImplementation "org.jetbrains.kotlin:kotlin-reflect:${kotlin_version}"
+
+    // Download from https://developer.amazon.com/sdk-download
+    // This library has not been updated since 2013, so it might be unlikely that the version will change
+    compileOnly files("libs/amazon-device-messaging-${adm_version}.jar")
+    testImplementation files("libs/amazon-device-messaging-${adm_version}.jar")
+    */
+
+    // reference browser
 
     /* androidTestImplementation Deps.uiautomator
 
