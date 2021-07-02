@@ -15,19 +15,18 @@ import mozilla.components.browser.engine.gecko.GeckoEngine
 import mozilla.components.browser.engine.gecko.fetch.GeckoViewFetchClient
 import mozilla.components.browser.engine.gecko.glean.GeckoAdapter
 import mozilla.components.concept.engine.Engine
-import mozilla.components.browser.engine.gecko
 import mozilla.components.feature.webcompat.WebCompatFeature
-import mozilla.components.feature.webcompat.reporter.WebCompatReporterFeature
 import mozilla.components.lib.crash.handler.CrashHandlerService
-import mozilla.components.support.base.log.Log
+import mozilla.components.support.utils.SafeIntent
 import org.mozilla.geckoview.GeckoRuntime
 import org.mozilla.geckoview.GeckoRuntimeSettings
-import org.mozilla.tv.firefox.BuildConfig
+import org.mozilla.tv.firefox.R
+import org.mozilla.tv.firefox.utils.BuildConstants
 
 /**
  * Helper class for lazily instantiating components needed by the application.
  */
-class Components(private val applicationContext: Context) : DefaultComponents(applicationContext) {
+class Components(applicationContext: Context) : DefaultComponents(applicationContext) {
     private var launchSafeIntent: SafeIntent? = null
 
     fun notifyLaunchWithSafeIntent(safeIntent: SafeIntent): Boolean {
@@ -45,21 +44,21 @@ class Components(private val applicationContext: Context) : DefaultComponents(ap
 
         uaBuilder.append("Mozilla/5.0")
 
-        uaBuilder.append(" (Linux; Android ").append(Build.VERSION.RELEASE).append(")")
+        uaBuilder.append(" (Linux; Android ").append(Build.VERSION.RELEASE).append(") ")
 
         val appName = applicationContext.resources.getString(R.string.useragent_appname)
         val appVersion: String? // unknown if Android framework returns null but not worth crashing over.
         try {
-            appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+            appVersion = applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
             // This should be impossible - we should always be able to get information about ourselves:
             throw IllegalStateException("Unable find package details for Focus", e)
         }
 
         val geckoVersion = "${org.mozilla.geckoview.BuildConfig.MOZ_APP_VERSION}"
-        uaBuilder.append(" Gecko/" + geckoVersion)
-        uaBuilder.append(" Firefox/" + geckoVersion)
-        uaBuilder.append(" " + appName + "/" + appVersion)
+        uaBuilder.append("Gecko/$geckoVersion ")
+        uaBuilder.append("Firefox/$geckoVersion ")
+        uaBuilder.append("$appName/$appVersion")
 
         return uaBuilder.toString()
     }
@@ -83,7 +82,6 @@ class Components(private val applicationContext: Context) : DefaultComponents(ap
     override val engine: Engine by lazy {
         GeckoEngine(applicationContext, engineSettings, runtime).also {
             WebCompatFeature.install(it)
-            WebCompatReporterFeature.install(it)
         }
     }
 

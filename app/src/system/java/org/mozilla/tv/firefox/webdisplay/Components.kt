@@ -4,20 +4,18 @@
 package org.mozilla.tv.firefox.webdisplay
 
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import android.text.TextUtils
 import android.webkit.WebSettings
 import mozilla.components.browser.engine.system.SystemEngine
-import mozilla.components.browser.session.SessionManager
-import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
-import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.support.utils.SafeIntent
 import org.mozilla.tv.firefox.R
-import org.mozilla.tv.firefox.utils.BuildConstants
-import org.mozilla.tv.firefox.utils.Settings
 
 /**
  * Helper class for lazily instantiating components needed by the application.
- * That is allready set as fallback in main: DefaultComponents
+ * That is already set as fallback in main: DefaultComponents
  */
 class Components(applicationContext: Context) : DefaultComponents(applicationContext) {
     fun notifyLaunchWithSafeIntent(@Suppress("UNUSED_PARAMETER") safeIntent: SafeIntent): Boolean {
@@ -30,7 +28,7 @@ class Components(applicationContext: Context) : DefaultComponents(applicationCon
      * Build the browser specific portion of the UA String, based on the webview's existing UA String.
      */
     private fun getUABrowserString(focusToken: String): String {
-        val existingUAString = WebSettings.getDefaultUserAgent(this)
+        val existingUAString = WebSettings.getDefaultUserAgent(applicationContext)
         // Use the default WebView agent string here for everything after the platform, but insert
         // Focus in front of Chrome.
         // E.g. a default webview UA string might be:
@@ -78,7 +76,7 @@ class Components(applicationContext: Context) : DefaultComponents(applicationCon
 
         val appVersion: String? // unknown if Android framework returns null but not worth crashing over.
         try {
-            appVersion = context.packageManager.getPackageInfo(context.packageName, 0).versionName
+            appVersion = applicationContext.packageManager.getPackageInfo(applicationContext.packageName, 0).versionName
         } catch (e: PackageManager.NameNotFoundException) {
             // This should be impossible - we should always be able to get information about ourselves:
             throw IllegalStateException("Unable find package details for Focus", e)
@@ -88,5 +86,9 @@ class Components(applicationContext: Context) : DefaultComponents(applicationCon
         uaBuilder.append(getUABrowserString(focusToken))
 
         return uaBuilder.toString()
+    }
+
+    override val engine: Engine by lazy {
+        SystemEngine(applicationContext, engineSettings)
     }
 }

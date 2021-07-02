@@ -33,6 +33,8 @@ private object Versions {
     const val uiautomator = "2.2.0"
     const val osslicenses_plugin = "0.10.4"
 
+    const val reactivex = "2.2.21"
+
     object AndroidX {
         const val activity_compose = "1.3.0-alpha05"
         const val core = "1.1.0"
@@ -115,7 +117,8 @@ object Deps {
     const val mozilla_support_webextensions = "org.mozilla.components:support-webextensions:${Versions.mozilla_android_components}"
 
     const val mozilla_lib_crash = "org.mozilla.components:lib-crash:${Versions.mozilla_android_components}"
-    const val mozilla_lib_push_firebase = "org.mozilla.components:lib-push-firebase:${Versions.mozilla_android_components}"
+    const val mozilla_lib_fetch_http_url_connection = "org.mozilla.components:lib-fetch-httpurlconnection:${Versions.mozilla_android_components}"
+    const val mozilla_lib_state = "org.mozilla.components:lib-state:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
     const val mozilla_lib_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
 
@@ -146,6 +149,10 @@ object Deps {
     const val tools_test_rules = "androidx.test:rules:${Versions.tools_test_rules}"
     const val tools_test_runner = "androidx.test:runner:${Versions.tools_test_runner}"
     const val uiautomator = "androidx.test.uiautomator:uiautomator:${Versions.uiautomator}"
+
+    const val reactivex_java = "io.reactivex.rxjava2:rxjava:${Versions.reactivex}"
+    const val reactivex_kotlin = "io.reactivex.rxjava2:rxkotlin:2.4.0"
+    const val reactivex_android = "io.reactivex.rxjava2:rxandroid:2.1.1"
 
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
 }

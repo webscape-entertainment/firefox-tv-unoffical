@@ -5,26 +5,13 @@
 package org.mozilla.tv.firefox.webdisplay
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.widget.Toast
-import androidx.core.content.ContextCompat
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
-import mozilla.components.browser.engine.system.SystemEngine
 import mozilla.components.browser.icons.BrowserIcons
-import mozilla.components.browser.menu.BrowserMenuHighlight
-import mozilla.components.browser.menu.WebExtensionBrowserMenuBuilder
-import mozilla.components.browser.menu.item.BrowserMenuCheckbox
-import mozilla.components.browser.menu.item.BrowserMenuDivider
-import mozilla.components.browser.menu.item.BrowserMenuHighlightableItem
-import mozilla.components.browser.menu.item.BrowserMenuImageText
-import mozilla.components.browser.menu.item.BrowserMenuItemToolbar
-import mozilla.components.browser.menu.item.SimpleBrowserMenuItem
+import mozilla.components.browser.session.Session
+import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.session.engine.EngineMiddleware
 import mozilla.components.browser.session.storage.SessionStorage
-import mozilla.components.browser.state.engine.EngineMiddleware
-import mozilla.components.browser.state.selector.selectedTab
 import mozilla.components.browser.state.store.BrowserStore
 import mozilla.components.browser.storage.sync.PlacesHistoryStorage
 import mozilla.components.browser.thumbnails.ThumbnailsMiddleware
@@ -32,40 +19,26 @@ import mozilla.components.browser.thumbnails.storage.ThumbnailStorage
 import mozilla.components.concept.base.crash.Breadcrumb
 import mozilla.components.concept.engine.DefaultSettings
 import mozilla.components.concept.engine.Engine
-import mozilla.components.concept.engine.mediaquery.PreferredColorScheme
 import mozilla.components.concept.fetch.Client
-import mozilla.components.feature.addons.AddonManager
-import mozilla.components.feature.addons.amo.AddonCollectionProvider
 import mozilla.components.feature.addons.migration.DefaultSupportedAddonsChecker
 import mozilla.components.feature.addons.migration.SupportedAddonsChecker
 import mozilla.components.feature.addons.update.AddonUpdater
 import mozilla.components.feature.addons.update.DefaultAddonUpdater
 import mozilla.components.feature.app.links.AppLinksInterceptor
 import mozilla.components.feature.app.links.AppLinksUseCases
-import mozilla.components.feature.autofill.AutofillConfiguration
 import mozilla.components.feature.contextmenu.ContextMenuUseCases
-import mozilla.components.feature.customtabs.CustomTabIntentProcessor
 import mozilla.components.feature.customtabs.store.CustomTabsServiceStore
-import mozilla.components.feature.downloads.DownloadMiddleware
 import mozilla.components.feature.downloads.DownloadsUseCases
 import mozilla.components.feature.intent.processing.TabIntentProcessor
 import mozilla.components.feature.media.middleware.RecordingDevicesMiddleware
 import mozilla.components.feature.prompts.PromptMiddleware
-import mozilla.components.feature.pwa.ManifestStorage
-import mozilla.components.feature.pwa.WebAppInterceptor
-import mozilla.components.feature.pwa.WebAppShortcutManager
-import mozilla.components.feature.pwa.WebAppUseCases
-import mozilla.components.feature.pwa.intent.TrustedWebActivityIntentProcessor
-import mozilla.components.feature.pwa.intent.WebAppIntentProcessor
 import mozilla.components.feature.readerview.ReaderViewMiddleware
 import mozilla.components.feature.search.SearchUseCases
 import mozilla.components.feature.search.middleware.SearchMiddleware
 import mozilla.components.feature.search.region.RegionMiddleware
-import mozilla.components.feature.session.HistoryDelegate
 import mozilla.components.feature.session.SessionUseCases
 import mozilla.components.feature.session.middleware.LastAccessMiddleware
 import mozilla.components.feature.session.middleware.undo.UndoMiddleware
-import mozilla.components.feature.sitepermissions.OnDiskSitePermissionsStorage
 import mozilla.components.feature.tabs.CustomTabsUseCases
 import mozilla.components.feature.tabs.TabsUseCases
 import mozilla.components.lib.crash.Crash
@@ -73,40 +46,22 @@ import mozilla.components.lib.crash.CrashReporter
 import mozilla.components.lib.crash.service.CrashReporterService
 import mozilla.components.lib.fetch.httpurlconnection.HttpURLConnectionClient
 import mozilla.components.lib.publicsuffixlist.PublicSuffixList
-import mozilla.components.service.digitalassetlinks.local.StatementApi
-import mozilla.components.service.digitalassetlinks.local.StatementRelationChecker
 import mozilla.components.service.location.LocationService
-import org.mozilla.tv.firefox.addons.AddonsActivity
-import org.mozilla.tv.firefox.autofill.AutofillConfirmActivity
-import org.mozilla.tv.firefox.autofill.AutofillSearchActivity
-import org.mozilla.tv.firefox.autofill.AutofillUnlockActivity
-import org.mozilla.tv.firefox.downloads.DownloadService
 import org.mozilla.tv.firefox.ext.components
-import org.mozilla.tv.firefox.integration.FindInPageIntegration
-import org.mozilla.tv.firefox.request.SampleUrlEncodedRequestInterceptor
-import org.mozilla.tv.firefox.storage.DummyLoginsStorage
+import org.mozilla.tv.firefox.utils.BuildConstants
+import org.mozilla.tv.firefox.utils.Settings
 import java.util.concurrent.TimeUnit
 
 private const val DAY_IN_MINUTES = 24 * 60L
 
 @Suppress("LargeClass")
-open class DefaultComponents(private val applicationContext: Context) {
+abstract class DefaultComponents(val applicationContext: Context) {
     companion object {
         const val SAMPLE_BROWSER_PREFERENCES = "sample_browser_preferences"
         const val PREF_LAUNCH_EXTERNAL_APP = "sample_browser_launch_external_app"
     }
 
-    val autofillConfiguration by lazy {
-        AutofillConfiguration(
-            storage = DummyLoginsStorage(),
-            publicSuffixList = publicSuffixList,
-            unlockActivity = AutofillUnlockActivity::class.java,
-            confirmActivity = AutofillConfirmActivity::class.java,
-            searchActivity = AutofillSearchActivity::class.java,
-            applicationName = "Firefox TV",
-            httpClient = client
-        )
-    }
+    abstract val engine: Engine
 
     val publicSuffixList by lazy { PublicSuffixList(applicationContext) }
 
@@ -114,25 +69,25 @@ open class DefaultComponents(private val applicationContext: Context) {
         applicationContext.getSharedPreferences(SAMPLE_BROWSER_PREFERENCES, Context.MODE_PRIVATE)
 
     // Shoud be fixed to old version of firefox tv
-    fun genUserAgent(): String =
+    open fun genUserAgent(): String =
         "Mozilla/5.0 (Linux; Android 7.1.2) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Focus/2.2.0.2 Chrome/59.0.3071.125 Mobile Safari/537.36"
 
     // Engine Settings
     val engineSettings by lazy {
         DefaultSettings().apply {
-            trackingProtectionPolicy = Settings.getInstance(applicationContext).trackingProtectionPolicy,
-            requestInterceptor = CustomContentRequestInterceptor(applicationContext),
-            userAgentString = genUserAgent(),
+            trackingProtectionPolicy = Settings.getInstance(applicationContext).trackingProtectionPolicy;
+            requestInterceptor = CustomContentRequestInterceptor(applicationContext);
+            userAgentString = genUserAgent();
 
-            displayZoomControls = false,
-            loadWithOverviewMode = true, // To respect the html viewport
+            displayZoomControls = false;
+            loadWithOverviewMode = true; // To respect the html viewport
 
             // We don't have a reason for users to access local files; assets can still
             // be loaded via file:///android_asset/
-            allowFileAccess = false,
-            allowContentAccess = false,
+            allowFileAccess = false;
+            allowContentAccess = false;
 
-            remoteDebuggingEnabled = BuildConstants.isDevBuild,
+            remoteDebuggingEnabled = BuildConstants.isDevBuild;
 
             mediaPlaybackRequiresUserGesture = false // Allows auto-play (which improves YouTube experience).
         }
@@ -140,11 +95,6 @@ open class DefaultComponents(private val applicationContext: Context) {
 
     val addonUpdater =
         DefaultAddonUpdater(applicationContext, AddonUpdater.Frequency(1, TimeUnit.DAYS))
-
-    // Engine
-    open val engine: Engine by lazy {
-        SystemEngine(applicationContext, engineSettings)
-    }
 
     open val client: Client by lazy { HttpURLConnectionClient() }
 
@@ -156,16 +106,13 @@ open class DefaultComponents(private val applicationContext: Context) {
 
     val sessionStorage by lazy { SessionStorage(applicationContext, engine) }
 
-    val permissionStorage by lazy { OnDiskSitePermissionsStorage(applicationContext) }
-
     val thumbnailStorage by lazy { ThumbnailStorage(applicationContext) }
 
     val store by lazy {
         BrowserStore(middleware = listOf(
-            DownloadMiddleware(applicationContext, DownloadService::class.java),
             ReaderViewMiddleware(),
             ThumbnailsMiddleware(thumbnailStorage),
-            UndoMiddleware(),
+            UndoMiddleware(::sessionManagerLookup),
             RegionMiddleware(
                 applicationContext,
                 LocationService.default()
@@ -174,28 +121,29 @@ open class DefaultComponents(private val applicationContext: Context) {
             RecordingDevicesMiddleware(applicationContext),
             LastAccessMiddleware(),
             PromptMiddleware()
-        ) + EngineMiddleware.create(engine))
+        ) + EngineMiddleware.create(engine, ::findSessionById))
+    }
+
+    private fun findSessionById(tabId: String): Session? {
+        return sessionManager.findSessionById(tabId)
+    }
+
+    private fun sessionManagerLookup(): SessionManager {
+        return sessionManager
+    }
+
+    val sessionManager by lazy {
+        SessionManager(engine, store).apply {
+            icons.install(engine, store)
+        }
     }
 
     val customTabsStore by lazy { CustomTabsServiceStore() }
 
-    val sessionUseCases by lazy { SessionUseCases(store) }
+    val sessionUseCases by lazy { SessionUseCases(store, sessionManager) }
 
-    val customTabsUseCases by lazy { CustomTabsUseCases(store, sessionUseCases.loadUrl) }
+    val customTabsUseCases by lazy { CustomTabsUseCases(sessionManager, sessionUseCases.loadUrl) }
 
-    // Addons
-    val addonManager by lazy {
-        AddonManager(store, engine, addonCollectionProvider, addonUpdater)
-    }
-
-    val addonCollectionProvider by lazy {
-        AddonCollectionProvider(
-            applicationContext,
-            client,
-            collectionName = "7dfae8669acc4312a65e8ba5553036",
-            maxCacheAgeInMinutes = DAY_IN_MINUTES
-        )
-    }
 
     val supportedAddonsChecker by lazy {
         DefaultSupportedAddonsChecker(applicationContext, SupportedAddonsChecker.Frequency(1, TimeUnit.DAYS))
@@ -226,67 +174,23 @@ open class DefaultComponents(private val applicationContext: Context) {
         )
     }
 
-    val webAppInterceptor by lazy {
-        WebAppInterceptor(
-            applicationContext,
-            webAppManifestStorage
-        )
-    }
-
-    val webAppManifestStorage by lazy { ManifestStorage(applicationContext) }
-    val webAppShortcutManager by lazy { WebAppShortcutManager(applicationContext, client, webAppManifestStorage) }
-    val webAppUseCases by lazy { WebAppUseCases(applicationContext, store, webAppShortcutManager) }
-
-    // Digital Asset Links checking
-    val relationChecker by lazy {
-        StatementRelationChecker(StatementApi(client))
-    }
-
     // Intent
     val tabIntentProcessor by lazy {
         TabIntentProcessor(tabsUseCases, sessionUseCases.loadUrl, searchUseCases.newTabSearch)
     }
-    val externalAppIntentProcessors by lazy {
-        listOf(
-            WebAppIntentProcessor(store, customTabsUseCases.addWebApp, sessionUseCases.loadUrl, webAppManifestStorage),
-            TrustedWebActivityIntentProcessor(
-                customTabsUseCases.add,
-                applicationContext.packageManager,
-                relationChecker,
-                customTabsStore
-            ),
-            CustomTabIntentProcessor(customTabsUseCases.add, applicationContext.resources)
-        )
-    }
 
-    // Menu
-    val menuBuilder by lazy {
-        WebExtensionBrowserMenuBuilder(
-            menuItems,
-            store = store,
-            style = WebExtensionBrowserMenuBuilder.Style(
-                webExtIconTintColorResource = R.color.photonGrey90
-            ),
-            onAddonsManagerTapped = {
-                val intent = Intent(applicationContext, AddonsActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                applicationContext.startActivity(intent)
-            }
-        )
-    }
-
-    private val menuItems by lazy {
+    /*private val menuItems by lazy {
         val items = mutableListOf(
             menuToolbar,
-            BrowserMenuHighlightableItem("No Highlight", R.drawable.mozac_ic_share, android.R.color.black,
+            BrowserMenuHighlightableItem("No Highlight", R.drawable.mozac_ic_share, R.color.black,
                 highlight = BrowserMenuHighlight.LowPriority(
-                    notificationTint = ContextCompat.getColor(applicationContext, android.R.color.holo_green_dark),
+                    notificationTint = ContextCompat.getColor(applicationContext, R.color.holo_green_dark),
                     label = "Highlight"
                 )
             ) {
                 Toast.makeText(applicationContext, "Highlight", Toast.LENGTH_SHORT).show()
             },
-            BrowserMenuImageText("Share", R.drawable.mozac_ic_share, android.R.color.black) {
+            BrowserMenuImageText("Share", R.drawable.mozac_ic_share, R.color.black) {
                 Toast.makeText(applicationContext, "Share", Toast.LENGTH_SHORT).show()
             },
             SimpleBrowserMenuItem("Settings") {
@@ -395,13 +299,13 @@ open class DefaultComponents(private val applicationContext: Context) {
         }
 
         BrowserMenuItemToolbar(listOf(back, forward, refresh))
-    }
+    }*/
 
     val shippedDomainsProvider by lazy {
         ShippedDomainsProvider().also { it.initialize(applicationContext) }
     }
 
-    val tabsUseCases: TabsUseCases by lazy { TabsUseCases(store) }
+    val tabsUseCases: TabsUseCases by lazy { TabsUseCases(store, sessionManager) }
     val downloadsUseCases: DownloadsUseCases by lazy { DownloadsUseCases(store) }
     val contextMenuUseCases: ContextMenuUseCases by lazy { ContextMenuUseCases(store) }
 

@@ -196,7 +196,8 @@ dependencies {
     implementation Deps.mozilla_support_webextensions
 
     implementation Deps.mozilla_lib_crash
-    implementation Deps.mozilla_lib_push_firebase
+    implementation Deps.mozilla_lib_state
+    implementation Deps.mozilla_lib_fetch_http_url_connection
     implementation Deps.mozilla_lib_publicsuffixlist
     implementation Deps.mozilla_lib_dataprotect
 
@@ -218,6 +219,10 @@ dependencies {
     implementation Deps.androidx_compose_material
 
     implementation Deps.google_material
+
+    implementation Deps.reactivex_java
+    implementation Deps.reactivex_kotlin
+    implementation Deps.reactivex_android
 
     // from fftv
 

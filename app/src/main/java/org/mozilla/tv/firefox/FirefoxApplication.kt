@@ -4,32 +4,28 @@
 
 package org.mozilla.tv.firefox
 
+//import mozilla.components.service.glean.Glean
+//import mozilla.components.service.glean.config.Configuration
+//import org.mozilla.tv.firefox.GleanMetrics.LegacyIds
 import android.os.StrictMode
-import androidx.annotation.VisibleForTesting
-import android.webkit.WebSettings
-import androidx.annotation.VisibleForTesting.PRIVATE
 import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import mozilla.appservices.Megazord
+import mozilla.components.browser.state.action.SystemAction
 import mozilla.components.concept.engine.utils.EngineVersion
-import mozilla.components.service.glean.Glean
-import mozilla.components.service.glean.config.Configuration
 import mozilla.components.support.base.log.Log
 import mozilla.components.support.base.log.sink.AndroidLogSink
 import mozilla.components.support.ktx.android.content.runOnlyInMainProcess
 import mozilla.components.support.ktx.android.os.resetAfter
 import mozilla.components.support.rusthttp.RustHttpConfig
-import org.mozilla.tv.firefox.GleanMetrics.LegacyIds
+import mozilla.components.support.rustlog.RustLog
 import org.mozilla.tv.firefox.components.locale.LocaleAwareApplication
-import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.telemetry.SentryIntegration
-import org.mozilla.tv.firefox.webdisplay.VisibilityLifeCycleCallback
 import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.BuildConstants
-import org.mozilla.tv.firefox.utils.OkHttpWrapper
 import org.mozilla.tv.firefox.utils.ServiceLocator
-import org.mozilla.tv.firefox.Components
-import java.util.UUID
+import org.mozilla.tv.firefox.webdisplay.Components
+import org.mozilla.tv.firefox.webdisplay.VisibilityLifeCycleCallback
 
 private const val DEFAULT_LOGTAG = "FFTV"
 
@@ -38,7 +34,7 @@ open class FirefoxApplication : LocaleAwareApplication() {
         private set
 
     // See the TestFirefoxApplication impl for why this method exists.
-    open fun getEngineVersion(): EngineVersion = Components.engine.version
+    open fun getEngineVersion(): EngineVersion = components.engine.version
 
     /**
      * Reference to components needed by the application.
@@ -68,7 +64,7 @@ open class FirefoxApplication : LocaleAwareApplication() {
 
             initRustDependencies()
             TelemetryIntegration.INSTANCE.init(this)
-            initGlean()
+            //initGlean()
 
             enableStrictMode()
 
@@ -85,13 +81,13 @@ open class FirefoxApplication : LocaleAwareApplication() {
 
     private fun initRustDependencies() {
         Megazord.init()
-        RustHttpConfig.setClient(lazy { components.core.client })
-        RustLog.enable(components.analytics.crashReporter)
+        RustHttpConfig.setClient(lazy { components.client })
+        RustLog.enable(components.crashReporter)
     }
 
     // This method is used to call Glean.setUploadEnabled. During the tests, this is
     // overridden to disable ping upload.
-    @VisibleForTesting
+    /*@VisibleForTesting
     protected open fun setGleanUpload() {
         serviceLocator.settingsRepo.dataCollectionEnabled.observeForever { collectionEnabled ->
             if (collectionEnabled != null) {
@@ -110,7 +106,7 @@ open class FirefoxApplication : LocaleAwareApplication() {
         setGleanUpload()
         LegacyIds.clientId.set(UUID.fromString(TelemetryIntegration.INSTANCE.clientId))
         Glean.initialize(applicationContext, Configuration(channel = BuildConfig.BUILD_TYPE))
-    }
+    }*/
 
     // ServiceLocator needs to be created in onCreate in order to accept Application
     // as an argument. Because of this, if we override `val serviceLocator` but
@@ -137,11 +133,16 @@ open class FirefoxApplication : LocaleAwareApplication() {
         StrictMode.setVmPolicy(vmPolicyBuilder.build())
     }
 
-    override fun onLowMemory() {
-        super.onLowMemory()
-        OkHttpWrapper.onLowMemory()
-        serviceLocator.sessionManager.onLowMemory()
-        // If you need to dump more memory, you may be able to clear the Picasso cache.
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
+
+        //logger.debug("onTrimMemory: $level")
+
+        runOnlyInMainProcess {
+            components.store.dispatch(SystemAction.LowMemoryAction(level))
+
+            components.icons.onTrimMemory(level)
+        }
     }
 
     @Deprecated("Avoid using this bus whenever possible. Only use it if the alternatives are even worse")
