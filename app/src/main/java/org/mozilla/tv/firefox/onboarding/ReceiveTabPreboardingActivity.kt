@@ -7,13 +7,10 @@ package org.mozilla.tv.firefox.onboarding
 import android.os.Bundle
 import android.preference.PreferenceManager
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.receive_tab_preboarding.buttonNotNow
-import kotlinx.android.synthetic.main.receive_tab_preboarding.buttonSignIn
-import kotlinx.android.synthetic.main.receive_tab_preboarding.descriptionText
+import kotlinx.android.synthetic.main.receive_tab_preboarding.*
 import org.mozilla.tv.firefox.FirefoxApplication
 import org.mozilla.tv.firefox.MainActivity
 import org.mozilla.tv.firefox.R
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 
 /**
  * Manages an onboarding screen, which is shown once to users upon app start in order
@@ -32,7 +29,7 @@ class ReceiveTabPreboardingActivity : AppCompatActivity() {
         )
 
         buttonSignIn.setOnClickListener {
-            TelemetryIntegration.INSTANCE.fxaPreboardingSignInButtonClickEvent()
+            //TelemetryIntegration.INSTANCE.fxaPreboardingSignInButtonClickEvent()
             @Suppress("DEPRECATION") // Couldn't work out a better way to do this. If you
             // think of one, please replace this
             (application as FirefoxApplication).mainActivityCommandBus
@@ -42,7 +39,7 @@ class ReceiveTabPreboardingActivity : AppCompatActivity() {
 
         buttonNotNow.setOnClickListener {
             finish()
-            TelemetryIntegration.INSTANCE.fxaPreboardingDismissButtonClickEvent()
+            //TelemetryIntegration.INSTANCE.fxaPreboardingDismissButtonClickEvent()
         }
 
         setOnboardReceiveTabsShown()

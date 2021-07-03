@@ -15,8 +15,8 @@ import io.reactivex.subjects.BehaviorSubject
 import kotlinx.android.synthetic.main.tabs_onboarding.*
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
+import mozilla.appservices.fxaclient.Config.Server
 import mozilla.components.concept.sync.*
-import mozilla.components.service.fxa.ServerConfig.Server
 import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.support.base.log.logger.Logger
@@ -24,8 +24,6 @@ import mozilla.components.support.base.observer.Consumable
 import org.mozilla.tv.firefox.R
 import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState.*
-import org.mozilla.tv.firefox.telemetry.SentryIntegration
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.Settings
 import org.mozilla.tv.firefox.utils.URLs
 import java.util.concurrent.TimeUnit
@@ -48,8 +46,6 @@ class FxaRepo(
     val context: Context,
     val accountManager: FxaAccountManager = newInstanceDefaultAccountManager(context),
     val admIntegration: ADMIntegration, // Consider moving to an FxaReceiveTabsUseCase or rm this comment.
-    private val telemetryIntegration: TelemetryIntegration = TelemetryIntegration.INSTANCE,
-    private val sentryIntegration: SentryIntegration = SentryIntegration
 ) {
 
     /**
@@ -131,7 +127,7 @@ class FxaRepo(
             .putBoolean(Settings.FXA_ONBOARD_SHOWN_PREF, true)
             .apply()
 
-        TelemetryIntegration.INSTANCE.fxaShowOnboardingEvent()
+        //TelemetryIntegration.INSTANCE.fxaShowOnboardingEvent()
         dialog.show()
     }
 
@@ -164,9 +160,9 @@ class FxaRepo(
             // edge cases will still be infrequently hit.
             .debounce(10, TimeUnit.SECONDS)
             .map { it is NeedsReauthentication }
-            .subscribe {
-                telemetryIntegration.doesFxaNeedReauthenticationEvent(it)
-            }
+            //.subscribe {
+            //    telemetryIntegration.doesFxaNeedReauthenticationEvent(it)
+            //}
     }
 
     /**
@@ -180,7 +176,7 @@ class FxaRepo(
             // Push service is only needed when logged in (this saves resources)
             admIntegration.initPushFeature()
 
-            telemetryIntegration.fxaLoggedInEvent()
+            //telemetryIntegration.fxaLoggedInEvent()
         }
 
         override fun onAuthenticationProblems() {
@@ -193,7 +189,7 @@ class FxaRepo(
             // Push service is not needed after logging out (this saves resources)
             admIntegration.shutdownPushFeature()
 
-            telemetryIntegration.fxaLoggedOutEvent()
+            //telemetryIntegration.fxaLoggedOutEvent()
         }
 
         /**

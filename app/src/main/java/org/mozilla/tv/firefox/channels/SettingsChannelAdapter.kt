@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.settings_tile.view.*
 import org.mozilla.tv.firefox.R
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.URLs
 
 class SettingsChannelAdapter(
@@ -59,7 +58,6 @@ class SettingsChannelAdapter(
                 SettingsButton.ABOUT -> loadUrl(URLs.URL_ABOUT)
                 SettingsButton.PRIVACY_POLICY -> loadUrl(URLs.PRIVACY_NOTICE_URL)
             }
-            TelemetryIntegration.INSTANCE.settingsTileClickEvent(itemData.type)
         }
         itemView.contentDescription = itemView.context.getString(itemData.titleRes)
         itemView.id = itemData.viewId // Add ids for testing

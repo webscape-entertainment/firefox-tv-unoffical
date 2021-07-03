@@ -73,7 +73,7 @@ class DefaultChannelAdapter(
 
             itemView.setOnClickListener {
                 loadUrl(tile.url)
-                channelConfig.onClickTelemetry?.invoke(tile)
+                //channelConfig.onClickTelemetry?.invoke(tile)
             }
 
             if (channelConfig.itemsMayBeRemoved) {

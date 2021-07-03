@@ -20,8 +20,6 @@ import mozilla.components.support.ktx.android.os.resetAfter
 import mozilla.components.support.rusthttp.RustHttpConfig
 import mozilla.components.support.rustlog.RustLog
 import org.mozilla.tv.firefox.components.locale.LocaleAwareApplication
-import org.mozilla.tv.firefox.telemetry.SentryIntegration
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.BuildConstants
 import org.mozilla.tv.firefox.utils.ServiceLocator
 import org.mozilla.tv.firefox.webdisplay.Components
@@ -59,11 +57,7 @@ open class FirefoxApplication : LocaleAwareApplication() {
         applicationContext.runOnlyInMainProcess {
             serviceLocator = createServiceLocator()
 
-            // Enable crash reporting. Don't add anything above here because if it crashes, we won't know.
-            SentryIntegration.init(this, serviceLocator.settingsRepo)
-
             initRustDependencies()
-            TelemetryIntegration.INSTANCE.init(this)
             //initGlean()
 
             enableStrictMode()

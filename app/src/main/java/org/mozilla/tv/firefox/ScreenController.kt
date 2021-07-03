@@ -21,8 +21,6 @@ import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.navigationoverlay.NavigationOverlayFragment
 import org.mozilla.tv.firefox.session.SessionRepo
 import org.mozilla.tv.firefox.settings.SettingsFragment
-import org.mozilla.tv.firefox.telemetry.MenuInteractionMonitor
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.telemetry.UrlTextInputLocation
 import org.mozilla.tv.firefox.utils.URLs
 import org.mozilla.tv.firefox.utils.UrlUtils
@@ -87,7 +85,7 @@ class ScreenController(private val sessionRepo: SessionRepo) {
                 throw IllegalArgumentException("Expected non-null input location for text input")
             }
 
-            TelemetryIntegration.INSTANCE.urlBarEvent(isUrl, autocompleteResult, inputLocation)
+            //TelemetryIntegration.INSTANCE.urlBarEvent(isUrl, autocompleteResult, inputLocation)
         }
     }
 
@@ -132,16 +130,16 @@ class ScreenController(private val sessionRepo: SessionRepo) {
             // fullscreen before any navigation options on the overlay are made available to the user
             val fullScreenExited = overlayFragment.context?.serviceLocator?.sessionRepo?.exitFullScreenIfPossible()
             if (fullScreenExited == true) {
-                TelemetryIntegration.INSTANCE.fullScreenVideoProgrammaticallyClosed()
+                //TelemetryIntegration.INSTANCE.fullScreenVideoProgrammaticallyClosed()
             }
 
             transaction.show(overlayFragment)
-            MenuInteractionMonitor.menuOpened()
+            //MenuInteractionMonitor.menuOpened()
             // TODO: Disabled until Overlay refactor is complete #1666
             // overlayFragment.navOverlayScrollView.updateOverlayForHomescreen(isOnHomeUrl(fragmentManager))
         } else {
             transaction.hide(overlayFragment)
-            MenuInteractionMonitor.menuClosed()
+            //MenuInteractionMonitor.menuClosed()
         }
 
         transaction.commit()
@@ -180,9 +178,9 @@ class ScreenController(private val sessionRepo: SessionRepo) {
     fun handleMenu(fragmentManager: FragmentManager): Boolean {
         val transition = ScreenControllerStateMachine.getNewStateMenuPress(_currentActiveScreen.value!!, isOnHomeUrl())
 
-        if (transition == Transition.ADD_OVERLAY) {
-            TelemetryIntegration.INSTANCE.menuOpenedFromMenuButton()
-        }
+        //if (transition == Transition.ADD_OVERLAY) {
+            //TelemetryIntegration.INSTANCE.menuOpenedFromMenuButton()
+        //}
 
         return handleTransitionAndUpdateActiveScreen(fragmentManager, transition)
     }

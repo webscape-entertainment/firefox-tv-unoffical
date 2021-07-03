@@ -19,9 +19,8 @@ import org.mozilla.tv.firefox.channels.content.getNewsChannels
 import org.mozilla.tv.firefox.channels.content.getSportsChannels
 import org.mozilla.tv.firefox.channels.pinnedtile.PinnedTileImageUtilWrapper
 import org.mozilla.tv.firefox.channels.pinnedtile.PinnedTileRepo
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.FormattedDomainWrapper
-import java.util.Collections
+import java.util.*
 
 private const val PREF_CHANNEL_REPO = "ChannelRepo"
 
@@ -61,11 +60,11 @@ class ChannelRepo(
     fun removeChannelContent(tileData: ChannelTile) {
         when (tileData.tileSource) {
             TileSource.CUSTOM -> {
-                TelemetryIntegration.INSTANCE.homeTileRemovedEvent(tileData)
+                //TelemetryIntegration.INSTANCE.homeTileRemovedEvent(tileData)
                 pinnedTileRepo.removePinnedTile(tileData.url)
             }
             TileSource.BUNDLED -> {
-                TelemetryIntegration.INSTANCE.homeTileRemovedEvent(tileData) // TODO: verify if we need news, sports and music tiles tracked
+                //TelemetryIntegration.INSTANCE.homeTileRemovedEvent(tileData) // TODO: verify if we need news, sports and music tiles tracked
                 addBundleTileToBlackList(tileData.tileSource, tileData.id)
                 pinnedTileRepo.removePinnedTile(tileData.url)
             }

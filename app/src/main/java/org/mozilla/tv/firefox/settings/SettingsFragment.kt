@@ -32,7 +32,6 @@ import org.mozilla.tv.firefox.channels.SettingsScreen
 import org.mozilla.tv.firefox.channels.SettingsTile
 import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.fxa.FxaRepo
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.PicassoWrapper
 import org.mozilla.tv.firefox.utils.RoundCornerTransformation
 import org.mozilla.tv.firefox.utils.ServiceLocator
@@ -143,16 +142,15 @@ class SettingsFragment : Fragment() {
     private fun setupFxaProfileClickListeners(view: View) {
         val screenController = serviceLocator.screenController
         val fxaRepo = serviceLocator.fxaRepo
-        val telemetryIntegration = TelemetryIntegration.INSTANCE
 
-        view.buttonFirefoxTabs.setOnClickListener {
+        //view.buttonFirefoxTabs.setOnClickListener {
             // TODO show send tab tutorial
-            telemetryIntegration.fxaProfileShowOnboardingButtonClickEvent()
-        }
+            //telemetryIntegration.fxaProfileShowOnboardingButtonClickEvent()
+        //}
         view.buttonSignOut.setOnClickListener {
             fxaRepo.logout()
             screenController.handleBack(fragmentManager!!)
-            telemetryIntegration.fxaProfileSignOutButtonClickEvent()
+            //telemetryIntegration.fxaProfileSignOutButtonClickEvent()
         }
         view.backButton.setOnClickListener {
             screenController.handleBack(fragmentManager!!)

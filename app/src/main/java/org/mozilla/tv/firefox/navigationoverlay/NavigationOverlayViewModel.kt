@@ -17,7 +17,6 @@ import org.mozilla.tv.firefox.channels.SettingsScreen
 import org.mozilla.tv.firefox.fxa.FxaLoginUseCase
 import org.mozilla.tv.firefox.fxa.FxaRepo
 import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 
 class ChannelTitles(
     val pinned: String,
@@ -77,7 +76,7 @@ class NavigationOverlayViewModel(
     fun fxaButtonClicked(fragmentManager: FragmentManager) {
         fun showFxaProfileScreen() {
             screenController.showSettingsScreen(fragmentManager, SettingsScreen.FXA_PROFILE)
-            TelemetryIntegration.INSTANCE.fxaShowProfileButtonClickEvent()
+            //TelemetryIntegration.INSTANCE.fxaShowProfileButtonClickEvent()
         }
 
         when (fxaRepo.accountState.blockingFirst()) {
@@ -87,11 +86,11 @@ class NavigationOverlayViewModel(
                 showFxaProfileScreen()
             }
             is AccountState.NeedsReauthentication -> {
-                TelemetryIntegration.INSTANCE.fxaReauthorizeButtonClickEvent()
+                //TelemetryIntegration.INSTANCE.fxaReauthorizeButtonClickEvent()
                 fxaLoginUseCase.beginLogin(fragmentManager)
             }
             is AccountState.NotAuthenticated, AccountState.Initial -> {
-                TelemetryIntegration.INSTANCE.fxaLoginButtonClickEvent()
+                //TelemetryIntegration.INSTANCE.fxaLoginButtonClickEvent()
                 fxaLoginUseCase.beginLogin(fragmentManager)
             }
         }

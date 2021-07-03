@@ -12,7 +12,6 @@ import androidx.annotation.VisibleForTesting
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.support.utils.SafeIntent
 import org.mozilla.tv.firefox.components.locale.LocaleManager
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.UrlUtils
 
 private const val EXTRA_FETCH_DELAY_KEY = "qaFetchDelaySeconds"
@@ -60,7 +59,7 @@ object IntentValidator {
             Intent.ACTION_MAIN -> {
                 val dialParams = intent.extras?.getString(DIAL_PARAMS_KEY) ?: return null
                 if (dialParams.isNotEmpty()) {
-                    TelemetryIntegration.INSTANCE.youtubeCastEvent()
+                    //TelemetryIntegration.INSTANCE.youtubeCastEvent()
                     return ValidatedIntentData(url = "https://www.youtube.com/tv?$dialParams", source = SessionState.Source.ACTION_VIEW)
                 }
             }
@@ -69,7 +68,7 @@ object IntentValidator {
                 if (TextUtils.isEmpty(dataString)) {
                     return null // We can't create a session from an Intent without a URL.
                 }
-                TelemetryIntegration.INSTANCE.viewIntentEvent()
+                //TelemetryIntegration.INSTANCE.viewIntentEvent()
                 return ValidatedIntentData(dataString, SessionState.Source.ACTION_VIEW)
             }
             Intent.ACTION_SEND -> {

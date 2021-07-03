@@ -34,7 +34,6 @@ import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.ext.setupForApp
 import org.mozilla.tv.firefox.fxa.FxaReceivedTab
 import org.mozilla.tv.firefox.onboarding.OnboardingActivity
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.telemetry.UrlTextInputLocation
 import org.mozilla.tv.firefox.utils.*
 import org.mozilla.tv.firefox.utils.publicsuffix.PublicSuffix
@@ -156,7 +155,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
 
     override fun onResume() {
         super.onResume()
-        TelemetryIntegration.INSTANCE.startSession(this)
+        //TelemetryIntegration.INSTANCE.startSession(this)
 
         maybeShowOnboarding()
     }
@@ -185,7 +184,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
 
     override fun onPause() {
         super.onPause()
-        TelemetryIntegration.INSTANCE.stopSession(this)
+        //TelemetryIntegration.INSTANCE.stopSession(this)
     }
 
     override fun onStart() {
@@ -212,7 +211,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
     override fun onStop() {
         super.onStop()
         LocaleManager.getInstance().resetLocaleIfChanged(applicationContext)
-        TelemetryIntegration.INSTANCE.stopMainActivity()
+        //TelemetryIntegration.INSTANCE.stopMainActivity()
         startStopCompositeDisposable.clear()
     }
 
@@ -288,7 +287,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
 
         val fragmentManager = supportFragmentManager
 
-        TelemetryIntegration.INSTANCE.saveRemoteControlInformation(applicationContext, event)
+        //TelemetryIntegration.INSTANCE.saveRemoteControlInformation(applicationContext, event)
 
         return videoVoiceCommandMediaSession.dispatchKeyEvent(event) ||
                 serviceLocator.screenController.dispatchKeyEvent(event, fragmentManager) ||
@@ -308,7 +307,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe { consumableTab ->
                 consumableTab.consume { tab ->
-                    TelemetryIntegration.INSTANCE.receivedTabEvent(tab.metadata)
+                    //TelemetryIntegration.INSTANCE.receivedTabEvent(tab.metadata)
                     openReceivedFxaTab(tab)
                     true // Consume value
                 }

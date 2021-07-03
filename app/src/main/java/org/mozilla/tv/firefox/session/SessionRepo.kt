@@ -16,7 +16,6 @@ import mozilla.components.browser.session.SessionManager
 import mozilla.components.feature.session.SessionUseCases
 import org.mozilla.tv.firefox.ext.isYoutubeTV
 import org.mozilla.tv.firefox.ext.toUri
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.TurboMode
 import org.mozilla.tv.firefox.webdisplay.EngineViewCache
 
@@ -71,7 +70,7 @@ class SessionRepo(
                 session.url.toUri()?.let { loadURL(it) }
             }
             fun causeSideEffects() {
-                if (isHostDifferentFromPrevious() && session.desktopMode) {
+                if (isHostDifferentFromPrevious() && session.enddesktopMode) {
                     disableDesktopMode()
                 }
             }
@@ -118,7 +117,7 @@ class SessionRepo(
         if (session.canGoBack) {
             exitFullScreenIfPossible()
             sessionUseCases.goBack.invoke()
-            TelemetryIntegration.INSTANCE.browserBackControllerEvent()
+            //TelemetryIntegration.INSTANCE.browserBackControllerEvent()
             return true
         }
 

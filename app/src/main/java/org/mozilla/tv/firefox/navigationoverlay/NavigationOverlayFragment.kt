@@ -18,8 +18,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ScrollView
-import androidx.annotation.VisibleForTesting
-import androidx.annotation.VisibleForTesting.NONE
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
@@ -38,14 +36,12 @@ import org.mozilla.tv.firefox.MainActivity
 import org.mozilla.tv.firefox.R
 import org.mozilla.tv.firefox.architecture.FirefoxViewModelProviders
 import org.mozilla.tv.firefox.channels.*
-import org.mozilla.tv.firefox.ext.isKeyCodeSelect
 import org.mozilla.tv.firefox.ext.isVoiceViewEnabled
 import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState
 import org.mozilla.tv.firefox.hint.HintBinder
 import org.mozilla.tv.firefox.hint.HintViewModel
 import org.mozilla.tv.firefox.hint.InactiveHintViewModel
-import org.mozilla.tv.firefox.telemetry.MenuInteractionMonitor
 import org.mozilla.tv.firefox.telemetry.UrlTextInputLocation
 import org.mozilla.tv.firefox.utils.*
 import org.mozilla.tv.firefox.widget.InlineAutocompleteEditText
@@ -240,15 +236,14 @@ class NavigationOverlayFragment : Fragment() {
     }
 
     fun dispatchKeyEvent(
-        event: KeyEvent,
-        @VisibleForTesting(otherwise = NONE) menuInteractionMonitor: MenuInteractionMonitor = MenuInteractionMonitor
+        event: KeyEvent
     ): Boolean {
         // MenuInteractionMonitor broke, which went unnoticed for several releases, when the overlay was refactored into
         // a different Fragment: it might be safer to model this reactively, in our architecture, which abstracts away
         // such framework constructs.
-        if (event.isKeyCodeSelect && event.action == KeyEvent.ACTION_DOWN) {
-            menuInteractionMonitor.selectPressed()
-        }
+        //if (event.isKeyCodeSelect && event.action == KeyEvent.ACTION_DOWN) {
+        //    menuInteractionMonitor.selectPressed()
+        //}
 
         return false
     }

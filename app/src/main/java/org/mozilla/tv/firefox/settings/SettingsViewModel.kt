@@ -5,7 +5,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import mozilla.components.support.base.observer.Consumable
 import org.mozilla.tv.firefox.session.SessionRepo
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.webdisplay.EngineViewCache
 
 class SettingsViewModel(
@@ -22,7 +21,7 @@ class SettingsViewModel(
     }
 
     fun clearBrowsingData(engineViewCache: EngineViewCache) {
-        TelemetryIntegration.INSTANCE.clearDataEvent()
+        //TelemetryIntegration.INSTANCE.clearDataEvent()
         sessionRepo.clearBrowsingData(engineViewCache)
         _events.value = Consumable.from(SettingsFragment.Action.SESSION_CLEARED)
     }

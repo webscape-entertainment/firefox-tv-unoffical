@@ -70,7 +70,7 @@ object UrlUtils {
 
     @JvmStatic
     fun createSearchUrl(context: Context, searchTerm: String): String {
-        val searchEngine = context.serviceLocator.searchEngineManager
+        val searchEngine = context.serviceLocator
             .getDefaultSearchEngine(context)
 
         return searchEngine.buildSearchUrl(searchTerm)

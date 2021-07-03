@@ -7,16 +7,14 @@ package org.mozilla.tv.firefox.channels
 import android.content.Context
 import org.mozilla.tv.firefox.architecture.KillswitchLocales
 import org.mozilla.tv.firefox.ext.serviceLocator
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
-import java.util.Locale
+import java.util.*
 
-private val TELEMETRY = TelemetryIntegration.INSTANCE
 
 /**
  * Data object that delivers custom configuration details to new channels
  */
 data class ChannelConfig(
-    val onClickTelemetry: ((ChannelTile) -> Unit)? = null,
+    //val onClickTelemetry: ((ChannelTile) -> Unit)? = null,
     val onLongClickTelemetry: ((ChannelTile) -> Unit)? = null,
     val onFocusTelemetry: ((ChannelTile, Boolean) -> Unit)? = null,
     val itemsMayBeRemoved: Boolean = false,
@@ -25,14 +23,14 @@ data class ChannelConfig(
 ) {
     companion object {
         fun getPinnedTileConfig(context: Context): ChannelConfig = ChannelConfig(
-            onClickTelemetry = { tile -> TELEMETRY.homeTileClickEvent(context, tile) },
+            //onClickTelemetry = { tile -> TELEMETRY.homeTileClickEvent(context, tile) },
             itemsMayBeRemoved = true,
             isEnabledInCurrentExperiment = true,
             enabledInLocales = KillswitchLocales.All
         )
 
         fun getTvGuideConfig(context: Context): ChannelConfig = ChannelConfig(
-            onClickTelemetry = { tile -> TELEMETRY.homeTileClickEvent(context, tile) },
+            //onClickTelemetry = { tile -> TELEMETRY.homeTileClickEvent(context, tile) },
             itemsMayBeRemoved = true,
             isEnabledInCurrentExperiment =
                 context.serviceLocator.experimentsProvider.shouldShowTvGuideChannels(),

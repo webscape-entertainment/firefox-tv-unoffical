@@ -4,52 +4,26 @@
 
 package org.mozilla.tv.firefox.webdisplay
 
-import androidx.lifecycle.Lifecycle.Event.ON_DESTROY
-import androidx.lifecycle.Lifecycle.Event.ON_PAUSE
-import androidx.lifecycle.Lifecycle.Event.ON_RESUME
-import androidx.lifecycle.Lifecycle.Event.ON_START
-import androidx.lifecycle.Lifecycle.Event.ON_STOP
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.OnLifecycleEvent
 import android.content.Intent
 import android.media.session.MediaSession
 import android.media.session.PlaybackState
-import android.media.session.PlaybackState.ACTION_PAUSE
-import android.media.session.PlaybackState.ACTION_PLAY
-import android.media.session.PlaybackState.ACTION_PLAY_PAUSE
-import android.media.session.PlaybackState.ACTION_SEEK_TO
-import android.media.session.PlaybackState.ACTION_SKIP_TO_NEXT
-import android.media.session.PlaybackState.ACTION_SKIP_TO_PREVIOUS
-import android.media.session.PlaybackState.PLAYBACK_POSITION_UNKNOWN
-import android.media.session.PlaybackState.STATE_BUFFERING
-import android.media.session.PlaybackState.STATE_PAUSED
-import android.media.session.PlaybackState.STATE_PLAYING
-import android.media.session.PlaybackState.STATE_STOPPED
+import android.media.session.PlaybackState.*
+import android.view.KeyEvent
+import android.view.KeyEvent.*
+import android.webkit.JavascriptInterface
 import androidx.annotation.UiThread
 import androidx.appcompat.app.AppCompatActivity
-import android.view.KeyEvent
-import android.view.KeyEvent.KEYCODE_MEDIA_NEXT
-import android.view.KeyEvent.KEYCODE_MEDIA_PAUSE
-import android.view.KeyEvent.KEYCODE_MEDIA_PLAY
-import android.view.KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE
-import android.view.KeyEvent.KEYCODE_MEDIA_PREVIOUS
-import android.webkit.JavascriptInterface
+import androidx.lifecycle.Lifecycle.Event.*
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import mozilla.components.browser.session.Session
 import mozilla.components.concept.engine.EngineView
+import org.mozilla.tv.firefox.ext.*
 import org.mozilla.tv.firefox.webdisplay.VideoVoiceCommandMediaSession.MediaSessionCallbacks
-import org.mozilla.tv.firefox.ext.addJavascriptInterface
-import org.mozilla.tv.firefox.ext.observePlaybackState
-import org.mozilla.tv.firefox.ext.pauseAllVideoPlaybacks
-import org.mozilla.tv.firefox.ext.pauseTargetVideo
-import org.mozilla.tv.firefox.ext.playTargetVideo
-import org.mozilla.tv.firefox.ext.removeJavascriptInterface
-import org.mozilla.tv.firefox.ext.seekTargetVideoToPosition
-import org.mozilla.tv.firefox.telemetry.MediaSessionEventType
-import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import java.util.concurrent.TimeUnit
 import kotlin.math.roundToLong
 
@@ -293,7 +267,7 @@ class VideoVoiceCommandMediaSession @UiThread constructor(
                 // Our overall goal is to see how often voice commands are used. play/pause are the
                 // only keys on a standard Alexa remote that also have voice commands so it's the
                 // only one we need to record in order to disambiguate voice commands from buttons.
-                TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PLAY_PAUSE_BUTTON)
+                //TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PLAY_PAUSE_BUTTON)
             }
 
             // Forward media next/prev events to the WebView: the WebView already receives key up
@@ -320,7 +294,7 @@ class VideoVoiceCommandMediaSession @UiThread constructor(
          */
         override fun onPlay() {
             engineView?.playTargetVideo()
-            TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PLAY)
+            //TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PLAY)
         }
 
         // See onPlay for details.
@@ -328,17 +302,17 @@ class VideoVoiceCommandMediaSession @UiThread constructor(
             // If we receive a MediaSession callback while the app is paused, it's coming from a
             // voice command (which pauses the app to handle them).
             engineView?.pauseTargetVideo(!isLifecycleResumed)
-            TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PAUSE)
+            //TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PAUSE)
         }
 
         override fun onSkipToNext() {
             dispatchKeyEventDownUp(KeyEvent.KEYCODE_MEDIA_NEXT)
-            TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.NEXT)
+            //TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.NEXT)
         }
 
         override fun onSkipToPrevious() {
             dispatchKeyEventDownUp(KeyEvent.KEYCODE_MEDIA_PREVIOUS)
-            TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PREV)
+            //TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.PREV)
         }
 
         private fun dispatchKeyEventDownUp(keyCode: Int) {
@@ -348,7 +322,7 @@ class VideoVoiceCommandMediaSession @UiThread constructor(
         override fun onSeekTo(absolutePositionMillis: Long) {
             val absolutePositionSeconds = TimeUnit.MILLISECONDS.toSeconds(absolutePositionMillis)
             engineView?.seekTargetVideoToPosition(absolutePositionSeconds)
-            TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.SEEK)
+            //TelemetryIntegration.INSTANCE.mediaSessionEvent(MediaSessionEventType.SEEK)
         }
     }
 }
