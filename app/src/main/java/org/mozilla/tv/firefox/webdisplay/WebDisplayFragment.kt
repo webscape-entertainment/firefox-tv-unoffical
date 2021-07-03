@@ -101,7 +101,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
     private fun initSession() {
         val sessionUUID = arguments?.getString(ARGUMENT_SESSION_UUID)
                 ?: throw IllegalAccessError("No session exists")
-        session = context!!.components.sessionManager.findSessionById(sessionUUID) ?: NullSession.create()
+        session = requireContext().components.sessionManager.findSessionById(sessionUUID) ?: NullSession.create()
         session.register(observer = this, owner = this)
     }
 
@@ -230,7 +230,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
                 .subscribe { engineView!!.scrollByClamped(it.x.toInt(), it.y.toInt()) }
                 .addTo(startStopCompositeDisposable)
 
-        cursorView.setup(context!!.serviceLocator.cursorModel)
+        cursorView.setup(requireContext().serviceLocator.cursorModel)
                 .addTo(startStopCompositeDisposable)
 
         val (hintViewModel, progressBarBottomMargin) = if (serviceLocator!!.experimentsProvider.shouldShowHintBar()) {
@@ -256,7 +256,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
     override fun onDestroyView() {
         mediaSessionHolder?.videoVoiceCommandMediaSession?.onDestroyEngineView(engineView!!, session)
 
-        context!!.serviceLocator.cursorModel.webViewCouldScrollInDirectionProvider = null
+        requireContext().serviceLocator.cursorModel.webViewCouldScrollInDirectionProvider = null
 
         rootView = null
 
@@ -294,7 +294,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
             } else {
                 // There's no session (anymore). Let's create a new one.
                 requireComponents.sessionManager.add(Session(url), selected = true)
-                requireComponents.sessionManager.getOrCreateEngineSession().resetView(activity!!)
+                requireComponents.sessionManager.getOrCreateEngineSession().resetView(requireActivity())
             }
         }
     }

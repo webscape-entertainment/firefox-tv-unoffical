@@ -60,8 +60,8 @@ abstract class EngineViewLifecycleFragment : LocaleAwareFragment() {
         // instances)
         engineView = (view.findViewById<View>(R.id.engineView) as EngineView).apply {
             sessionFeature = SessionFeature(
-                    requireComponents.sessionManager,
-                    requireComponents.sessionUseCases,
+                    requireComponents.store,
+                    requireComponents.sessionUseCases.goBack,
                     this)
         }
     }
@@ -102,7 +102,7 @@ abstract class EngineViewLifecycleFragment : LocaleAwareFragment() {
     }
 
     override fun applyLocale() {
-        val context = context!!
+        val context = requireContext()
         val localeManager = LocaleManager.getInstance()
         if (!localeManager.isMirroringSystemLocale(context)) {
             val currentLocale = localeManager.getCurrentLocale(context)

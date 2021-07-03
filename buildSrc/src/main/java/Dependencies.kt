@@ -34,11 +34,14 @@ private object Versions {
     const val osslicenses_plugin = "0.10.4"
 
     const val reactivex = "2.2.21"
+    const val adm = "1.0.1"
 
     object AndroidX {
         const val activity_compose = "1.3.0-alpha05"
         const val core = "1.1.0"
         const val compose = "1.0.0-beta03"
+        const val lifecycle = "2.0.0"
+        const val version = "1.0.0"
     }
 }
 
@@ -121,6 +124,7 @@ object Deps {
     const val mozilla_lib_state = "org.mozilla.components:lib-state:${Versions.mozilla_android_components}"
     const val mozilla_lib_dataprotect = "org.mozilla.components:lib-dataprotect:${Versions.mozilla_android_components}"
     const val mozilla_lib_publicsuffixlist = "org.mozilla.components:lib-publicsuffixlist:${Versions.mozilla_android_components}"
+    const val mozilla_lib_push_amazon = "org.mozilla.components:lib-push-amazon:${Versions.mozilla_android_components}"
 
     const val thirdparty_sentry = "io.sentry:sentry-android:${Versions.thirdparty_sentry}"
 
@@ -134,6 +138,10 @@ object Deps {
     const val androidx_compose_foundation = "androidx.compose.foundation:foundation:${Versions.AndroidX.compose}"
     const val androidx_compose_material = "androidx.compose.material:material:${Versions.AndroidX.compose}"
     const val androidx_activity_compose = "androidx.activity:activity-compose:${Versions.AndroidX.activity_compose}"
+    const val androidx_lifecycle_ext = "androidx.lifecycle:lifecycle-extensions:${Versions.AndroidX.lifecycle}"
+    const val androidx_lifecycle_viewmodel = "androidx.lifecycle:lifecycle-viewmodel:${Versions.AndroidX.lifecycle}"
+    const val androidx_lifecycle_reactivestreams = "androidx.lifecycle:lifecycle-reactivestreams:${Versions.AndroidX.lifecycle}"
+    const val androidx_leanback = "androidx.leanback:leanback:${Versions.AndroidX.version}"
 
     const val google_material = "com.google.android.material:material:${Versions.google_material}"
 
@@ -155,4 +163,5 @@ object Deps {
     const val reactivex_android = "io.reactivex.rxjava2:rxandroid:2.1.1"
 
     const val osslicenses_plugin = "com.google.android.gms:oss-licenses-plugin:${Versions.osslicenses_plugin}"
+    const val adm = "libs/amazon-device-messaging-${Versions.adm}.jar"
 }

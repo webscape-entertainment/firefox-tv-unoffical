@@ -7,12 +7,12 @@ package org.mozilla.tv.firefox.search
 import android.content.Context
 import androidx.annotation.VisibleForTesting
 import java.util.Locale
-import mozilla.components.browser.search.SearchEngine
-import mozilla.components.browser.search.provider.AssetsSearchEngineProvider
-import mozilla.components.browser.search.provider.SearchEngineList
-import mozilla.components.browser.search.provider.SearchEngineProvider
-import mozilla.components.browser.search.provider.localization.SearchLocalization
-import mozilla.components.browser.search.provider.localization.SearchLocalizationProvider
+mozilla.components.browser.state.search.SearchEngine
+import mozilla.components.feature.search.provider.AssetsSearchEngineProvider
+import mozilla.components.feature.search.provider.SearchEngineList
+import mozilla.components.feature.search.provider.SearchEngineProvider
+import mozilla.components.feature.search.provider.localization.SearchLocalization
+import mozilla.components.feature.search.provider.localization.SearchLocalizationProvider
 import mozilla.components.support.base.log.logger.Logger
 
 private val logger = Logger("Search")

@@ -19,28 +19,24 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.rxkotlin.addTo
 import io.sentry.Sentry
-import kotlinx.android.synthetic.main.activity_main.container_navigation_overlay
-import kotlinx.android.synthetic.main.overlay_debug.debugLog
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.overlay_debug.*
 import mozilla.components.browser.session.Session
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.concept.engine.EngineView
 import mozilla.components.support.base.observer.Consumable
 import mozilla.components.support.utils.toSafeIntent
 import org.mozilla.tv.firefox.components.locale.LocaleAwareAppCompatActivity
 import org.mozilla.tv.firefox.components.locale.LocaleManager
 import org.mozilla.tv.firefox.ext.application
-import org.mozilla.tv.firefox.ext.resetView
+import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.ext.setupForApp
-import org.mozilla.tv.firefox.ext.components
 import org.mozilla.tv.firefox.fxa.FxaReceivedTab
 import org.mozilla.tv.firefox.onboarding.OnboardingActivity
 import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.telemetry.UrlTextInputLocation
-import org.mozilla.tv.firefox.utils.BuildConstants
-import org.mozilla.tv.firefox.utils.OnUrlEnteredListener
-import org.mozilla.tv.firefox.utils.Settings
-import org.mozilla.tv.firefox.utils.URLs
-import org.mozilla.tv.firefox.utils.ViewUtils
+import org.mozilla.tv.firefox.utils.*
 import org.mozilla.tv.firefox.utils.publicsuffix.PublicSuffix
 import org.mozilla.tv.firefox.webdisplay.VideoVoiceCommandMediaSession
 import org.mozilla.tv.firefox.widget.InlineAutocompleteEditText
@@ -83,7 +79,8 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
 
         val session = getOrCreateSession(intentData)
 
-        components.sessionManager.getOrCreateEngineSession().resetView(this@MainActivity)
+        //components.store
+        //components.sessionManager.getOrCreateEngineSession().resetView(this@MainActivity)
 
         val screenController = serviceLocator.screenController
         screenController.setUpFragmentsForNewSession(supportFragmentManager, session)
@@ -104,7 +101,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
         // Debug logging display for non public users
         // TODO: refactor out the debug variant visibility check in #1953
         BuildConstants.debugLogStr?.apply {
-            val engineViewVersion = (this@MainActivity as Context).application.getEngineViewVersion()
+            val engineViewVersion = (this@MainActivity as Context).application.getEngineVersion()
             debugLog.visibility = View.VISIBLE
             debugLog.text = "$this $engineViewVersion"
         }
@@ -126,7 +123,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
         return components.sessionManager.selectedSession
             ?: Session(
                 initialUrl = intentData?.url ?: URLs.APP_URL_HOME,
-                source = intentData?.source ?: Session.Source.NONE
+                source = intentData?.source ?: SessionState.Source.NONE
             ).also { components.sessionManager.add(it, selected = true) }
     }
 
@@ -209,7 +206,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
 
         // TODO remove this after FxA adds push event for revoked logins
         // See: https://github.com/mozilla/application-services/issues/1418
-        serviceLocator.fxaRepo.pollAccountState()
+        //serviceLocator.fxaRepo.pollAccountState()
     }
 
     override fun onStop() {
@@ -219,7 +216,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
         startStopCompositeDisposable.clear()
     }
 
-    override fun onDestroy() {
+    /*override fun onDestroy() {
         if (components.sessionManager.size > 0) {
             /**
              * This is to clear the previously assigned WebView instance from EngineView (which
@@ -239,7 +236,7 @@ class MainActivity : LocaleAwareAppCompatActivity(), OnUrlEnteredListener, Media
             components.sessionManager.getEngineSession()?.resetView(applicationContext)
         }
         super.onDestroy()
-    }
+    }*/
 
     override fun onCreateView(parent: View?, name: String, context: Context, attrs: AttributeSet): View? {
         return if (name == EngineView::class.java.name) {

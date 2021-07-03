@@ -6,6 +6,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.android.gms.oss-licenses-plugin'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'checkstyle'
 apply from: "$project.rootDir/automation/gradle/versionCode.gradle"
 
@@ -200,6 +201,7 @@ dependencies {
     implementation Deps.mozilla_lib_fetch_http_url_connection
     implementation Deps.mozilla_lib_publicsuffixlist
     implementation Deps.mozilla_lib_dataprotect
+    implementation Deps.mozilla_lib_push_amazon
 
     implementation Deps.thirdparty_sentry
 
@@ -217,6 +219,11 @@ dependencies {
     implementation Deps.androidx_compose_ui_tooling
     implementation Deps.androidx_compose_foundation
     implementation Deps.androidx_compose_material
+    implementation Deps.androidx_leanback
+
+    implementation Deps.androidx_lifecycle_ext
+    implementation Deps.androidx_lifecycle_viewmodel
+    implementation Deps.androidx_lifecycle_reactivestreams
 
     implementation Deps.google_material
 
@@ -224,6 +231,10 @@ dependencies {
     implementation Deps.reactivex_kotlin
     implementation Deps.reactivex_android
 
+    implementation 'com.squareup.picasso:picasso:2.71828'
+
+    compileOnly files(Deps.adm)
+    testImplementation files(Deps.adm)
     // from fftv
 
     /* testImplementation "androidx.arch.core:core-testing:$architecture_components_version"

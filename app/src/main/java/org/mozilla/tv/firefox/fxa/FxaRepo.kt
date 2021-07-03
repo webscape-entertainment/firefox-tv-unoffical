@@ -12,26 +12,18 @@ import androidx.annotation.VisibleForTesting
 import androidx.annotation.VisibleForTesting.NONE
 import io.reactivex.Observable
 import io.reactivex.subjects.BehaviorSubject
-import kotlinx.android.synthetic.main.tabs_onboarding.descriptionText
-import kotlinx.android.synthetic.main.tabs_onboarding.tabs_onboarding_button
-import kotlinx.coroutines.Deferred
-import mozilla.appservices.fxaclient.Config
-import mozilla.components.concept.sync.AccountObserver
-import mozilla.components.concept.sync.AuthType
-import mozilla.components.concept.sync.DeviceCapability
-import mozilla.components.concept.sync.DeviceType
-import mozilla.components.concept.sync.OAuthAccount
-import mozilla.components.concept.sync.Profile
-import mozilla.components.service.fxa.DeviceConfig
+import kotlinx.android.synthetic.main.tabs_onboarding.*
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import mozilla.components.concept.sync.*
+import mozilla.components.service.fxa.ServerConfig.Server
+import mozilla.components.service.fxa.ServerConfig
 import mozilla.components.service.fxa.manager.FxaAccountManager
 import mozilla.components.support.base.log.logger.Logger
 import mozilla.components.support.base.observer.Consumable
 import org.mozilla.tv.firefox.R
 import org.mozilla.tv.firefox.ext.serviceLocator
-import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState.AuthenticatedNoProfile
-import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState.AuthenticatedWithProfile
-import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState.NeedsReauthentication
-import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState.NotAuthenticated
+import org.mozilla.tv.firefox.fxa.FxaRepo.AccountState.*
 import org.mozilla.tv.firefox.telemetry.SentryIntegration
 import org.mozilla.tv.firefox.telemetry.TelemetryIntegration
 import org.mozilla.tv.firefox.utils.Settings
@@ -97,24 +89,27 @@ class FxaRepo(
         accountManager.register(accountObserver)
 
         @Suppress("DeferredResultUnused") // No value is returned & we don't need to wait for this to complete.
-        accountManager.initAsync() // If user is already logged in, the appropriate observers will be triggered.
+        MainScope().launch {
+            accountManager.start()
+        }
+        // accountManager.initAsync() If user is already logged in, the appropriate observers will be triggered.
 
         admIntegration.createSendTabFeature(accountManager)
 
         setupTelemetry()
     }
 
-    fun logout() {
+    suspend fun logout() {
         @Suppress("DeferredResultUnused") // No value is returned & we don't need to wait for this to complete.
-        accountManager.logoutAsync()
+        accountManager.logout()
     }
 
     /**
      * Notifies the FxA library that login is starting: callers should generally call [FxaLoginUseCase.beginLogin]
      * instead of this method.
      */
-    fun beginLoginInternalAsync(): Deferred<String?> {
-        return accountManager.beginAuthenticationAsync()
+    suspend fun beginLoginInternalAsync(): String? {
+        return accountManager.beginAuthentication()
     }
 
     fun showFxaOnboardingScreen(context: Context) {
@@ -149,10 +144,10 @@ class FxaRepo(
      * TODO remove this after FxA adds push event for revoked logins
      * See: https://github.com/mozilla/application-services/issues/1418
      */
-    fun pollAccountState() {
+    suspend fun pollAccountState() {
         @Suppress("DeferredResultUnused") // We don't need to do anything when
         // this finishes
-        accountManager.authenticatedAccount()?.deviceConstellation()?.pollForEventsAsync()
+        accountManager.authenticatedAccount()?.deviceConstellation()?.pollForCommands()
     }
 
     @SuppressLint("CheckResult") // This survives for the duration of the app
@@ -217,7 +212,7 @@ class FxaRepo(
             val deviceModel = context.serviceLocator.deviceInfo.getDeviceModel()
             return FxaAccountManager(
                 context,
-                Config.release(CLIENT_ID, REDIRECT_URI),
+                ServerConfig(Server.STAGE, CLIENT_ID, REDIRECT_URI),
                 applicationScopes = APPLICATION_SCOPES,
                 deviceConfig = DeviceConfig(
                     name = "Firefox on $deviceModel",

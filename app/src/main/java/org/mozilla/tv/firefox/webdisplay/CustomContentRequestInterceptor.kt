@@ -57,8 +57,8 @@ class CustomContentRequestInterceptor(
 
     override fun onErrorRequest(session: EngineSession, errorType: ErrorType, uri: String?): RequestInterceptor.ErrorResponse? {
         return uri?.let {
-            val data = ErrorPage.loadErrorPage(context, uri, errorType)
-            RequestInterceptor.ErrorResponse(data, uri)
+            //val data = ErrorPage.loadErrorPage(context, uri, errorType)
+            RequestInterceptor.ErrorResponse(uri)
         }
     }
 }

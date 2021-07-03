@@ -7,7 +7,7 @@ package org.mozilla.tv.firefox.search
 import android.app.Application
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import mozilla.components.browser.search.SearchEngineManager
+import mozilla.components.feature.search.SearchUseCases
 import org.mozilla.tv.firefox.search.SearchEngineManagerFactory.AMAZON_SEARCH_CODE
 import org.mozilla.tv.firefox.search.SearchEngineManagerFactory.AMAZON_SEARCH_CODE_US_ONLY
 import org.mozilla.tv.firefox.utils.ServiceLocator
