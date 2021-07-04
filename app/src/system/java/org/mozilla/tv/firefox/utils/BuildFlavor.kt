@@ -7,8 +7,8 @@ package org.mozilla.tv.firefox.utils
 
 import android.content.Context
 import mozilla.components.concept.engine.request.RequestInterceptor
-import org.mozilla.tv.firefox.BuildConfig
 import org.mozilla.tv.firefox.ext.components
+import org.mozilla.tv.firefox.BuildConfig
 
 /**
  * Provides build flavor specific tasks

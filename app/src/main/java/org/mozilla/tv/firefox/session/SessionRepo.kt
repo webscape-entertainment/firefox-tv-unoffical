@@ -13,7 +13,6 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
-import mozilla.components.browser.state.state.BrowserState
 import mozilla.components.browser.state.state.SessionState
 import mozilla.components.feature.session.SessionUseCases
 import org.mozilla.tv.firefox.ext.isYoutubeTV
@@ -27,7 +26,6 @@ import org.mozilla.tv.firefox.webdisplay.EngineViewCache
 class SessionRepo(
     private val sessionManager: SessionManager,
     private val sessionUseCases: SessionUseCases,
-    private val browserState: BrowserState,
     private val sessionState: SessionState,
     private val turboMode: TurboMode
 ) {

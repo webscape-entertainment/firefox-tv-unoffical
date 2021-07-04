@@ -134,8 +134,6 @@ open class FirefoxApplication : LocaleAwareApplication() {
 
         runOnlyInMainProcess {
             components.store.dispatch(SystemAction.LowMemoryAction(level))
-
-            components.icons.onTrimMemory(level)
         }
     }
 

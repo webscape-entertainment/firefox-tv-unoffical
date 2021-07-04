@@ -26,7 +26,7 @@ import org.mozilla.tv.firefox.ext.Js.SIDEBAR_FOCUSED
 import org.mozilla.tv.firefox.utils.Direction
 import org.mozilla.tv.firefox.utils.URLs
 import org.mozilla.tv.firefox.webdisplay.FocusedDOMElementCache
-import java.util.WeakHashMap
+import java.util.*
 
 // Extension methods on the EngineView class. This is used for additional features that are not part
 // of the upstream browser-engine(-system) component yet.
@@ -303,7 +303,7 @@ private class EngineViewExtension(private val engineView: EngineView) {
     val webView: WebView?
         get() =
             if (sessionManager.size > 0) {
-                (sessionManager.getOrCreateEngineSession() as SystemEngineSession).webView
+                SystemEngineSession(engineView.asView().context).webView
             } else {
                 // After clearing all session we temporarily don't have a selected session
                 // and [SessionRepo.clear()] destroyed the existing webview - see [SystemEngineView.onDestroy()]

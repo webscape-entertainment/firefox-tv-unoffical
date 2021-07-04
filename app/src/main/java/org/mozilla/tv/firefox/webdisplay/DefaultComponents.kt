@@ -7,7 +7,6 @@ package org.mozilla.tv.firefox.webdisplay
 import android.content.Context
 import android.content.SharedPreferences
 import mozilla.components.browser.domains.autocomplete.ShippedDomainsProvider
-import mozilla.components.browser.icons.BrowserIcons
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
 import mozilla.components.browser.session.engine.EngineMiddleware
@@ -98,8 +97,6 @@ abstract class DefaultComponents(val applicationContext: Context) {
 
     open val client: Client by lazy { HttpURLConnectionClient() }
 
-    val icons by lazy { BrowserIcons(applicationContext, client) }
-
     // Storage
     private val lazyHistoryStorage = lazy { PlacesHistoryStorage(applicationContext) }
     val historyStorage by lazy { lazyHistoryStorage.value }
@@ -133,9 +130,7 @@ abstract class DefaultComponents(val applicationContext: Context) {
     }
 
     val sessionManager by lazy {
-        SessionManager(engine, store).apply {
-            icons.install(engine, store)
-        }
+        SessionManager(engine, store)
     }
 
     val customTabsStore by lazy { CustomTabsServiceStore() }
