@@ -10,6 +10,7 @@ package org.mozilla.tv.firefox.utils
 
 import android.app.Application
 import androidx.lifecycle.MutableLiveData
+import mozilla.components.browser.state.selector.allTabs
 import mozilla.components.support.base.observer.Consumable
 import org.mozilla.tv.firefox.ScreenController
 import org.mozilla.tv.firefox.ValidatedIntentData
@@ -84,6 +85,6 @@ open class ServiceLocator(val app: Application) {
     // These open vals are overridden in testing
     open val frameworkRepo = FrameworkRepo.newInstanceAndInit(app.getAccessibilityManager())
     open val pinnedTileRepo by lazy { PinnedTileRepo(app) }
-    open val sessionRepo by lazy { SessionRepo(sessionManager, sessionUseCases, turboMode).apply { observeSources() } }
+    open val sessionRepo by lazy { SessionRepo(sessionManager, sessionUseCases, app.components.store.state, app.components.store.state.allTabs[0] ,turboMode).apply { observeSources() } }
     open val settingsRepo by lazy { SettingsRepo(app) }
 }

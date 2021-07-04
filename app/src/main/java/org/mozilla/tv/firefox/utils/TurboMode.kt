@@ -24,13 +24,13 @@ class TurboMode(private val app: Application) {
 
             // Update TrackingProtectionPolicy for both current session and EngineSettings
             val engineSettings = app.components.engine.settings
-            val engineSession = app.components.sessionManager.getOrCreateEngineSession()
+            //val engineSession = app.components.sessionManager.getOrCreateEngineSession()
             if (enabled) {
                 engineSettings.trackingProtectionPolicy = settings.trackingProtectionPolicy
-                engineSession.enableTrackingProtection(settings.trackingProtectionPolicy)
+                //engineSession.enableTrackingProtection(settings.trackingProtectionPolicy)
             } else {
                 engineSettings.trackingProtectionPolicy = null
-                engineSession.disableTrackingProtection()
+                //engineSession.disableTrackingProtection()
             }
             _observable.postValue(enabled)
         }

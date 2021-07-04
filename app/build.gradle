@@ -39,11 +39,6 @@ android {
         preDexLibraries true
     }
 
-    buildFeatures {
-        compose true
-        viewBinding true
-    }
-
     buildTypes {
         release {
             minifyEnabled true
@@ -214,11 +209,11 @@ dependencies {
     implementation Deps.androidx_preference_ktx
     implementation Deps.androidx_work_runtime_ktx
 
-    implementation Deps.androidx_activity_compose
-    implementation Deps.androidx_compose_ui
-    implementation Deps.androidx_compose_ui_tooling
-    implementation Deps.androidx_compose_foundation
-    implementation Deps.androidx_compose_material
+    //implementation Deps.androidx_activity_compose
+    //implementation Deps.androidx_compose_ui
+    //implementation Deps.androidx_compose_ui_tooling
+    //implementation Deps.androidx_compose_foundation
+    //implementation Deps.androidx_compose_material
     implementation Deps.androidx_leanback
 
     implementation Deps.androidx_lifecycle_ext

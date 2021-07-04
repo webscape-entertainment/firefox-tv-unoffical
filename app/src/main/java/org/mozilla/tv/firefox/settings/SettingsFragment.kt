@@ -148,8 +148,8 @@ class SettingsFragment : Fragment() {
             //telemetryIntegration.fxaProfileShowOnboardingButtonClickEvent()
         //}
         view.buttonSignOut.setOnClickListener {
-            fxaRepo.logout()
-            screenController.handleBack(fragmentManager!!)
+            //fxaRepo.logout()
+            screenController.handleBack(requireFragmentManager())
             //telemetryIntegration.fxaProfileSignOutButtonClickEvent()
         }
         view.backButton.setOnClickListener {

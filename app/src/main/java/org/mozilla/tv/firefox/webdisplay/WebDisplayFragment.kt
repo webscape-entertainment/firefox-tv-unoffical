@@ -8,11 +8,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.PointF
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.widget.Button
 import android.widget.FrameLayout
 import androidx.core.view.isGone
@@ -35,20 +31,7 @@ import org.mozilla.tv.firefox.MediaSessionHolder
 import org.mozilla.tv.firefox.R
 import org.mozilla.tv.firefox.ScreenControllerStateMachine.ActiveScreen
 import org.mozilla.tv.firefox.architecture.FirefoxViewModelProviders
-import org.mozilla.tv.firefox.ext.addSubmitListenerToInputElements
-import org.mozilla.tv.firefox.ext.couldScrollInDirection
-import org.mozilla.tv.firefox.ext.focusedDOMElement
-import org.mozilla.tv.firefox.ext.isUrlWhitelistedForSubmitInputHack
-import org.mozilla.tv.firefox.ext.isYoutubeTV
-import org.mozilla.tv.firefox.ext.maybeGoBackBeforeFxaSignIn
-import org.mozilla.tv.firefox.ext.observeScrollPosition
-import org.mozilla.tv.firefox.ext.pauseAllVideoPlaybacks
-import org.mozilla.tv.firefox.ext.requireComponents
-import org.mozilla.tv.firefox.ext.resetView
-import org.mozilla.tv.firefox.ext.scrollByClamped
-import org.mozilla.tv.firefox.ext.serviceLocator
-import org.mozilla.tv.firefox.ext.updateFullscreenScrollPosition
-import org.mozilla.tv.firefox.ext.components
+import org.mozilla.tv.firefox.ext.*
 import org.mozilla.tv.firefox.hint.HintBinder
 import org.mozilla.tv.firefox.hint.InactiveHintViewModel
 import org.mozilla.tv.firefox.session.SessionRepo
@@ -105,7 +88,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
         session.register(observer = this, owner = this)
     }
 
-    override fun onFullScreenChanged(session: Session, enabled: Boolean) {
+    fun onFullScreenChanged(session: Session, enabled: Boolean) {
         val window = (context as? Activity)?.window ?: return
         val dontSleep = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
@@ -140,7 +123,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
         }
     }
 
-    override fun onDesktopModeChanged(session: Session, enabled: Boolean) {
+    fun onDesktopModeChanged(session: Session, enabled: Boolean) {
         requireComponents.sessionUseCases.requestDesktopSite.invoke(enabled, session)
     }
 
@@ -216,7 +199,7 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
          * its associated [EngineSession.webview]. We need make sure to load initialUrl after
          * WebView sets its WebViewClient (which happens during EngineView.render())
          */
-        requireComponents.sessionManager.getOrCreateEngineSession().loadUrl(session.url)
+        requireComponents.sessionUseCases.loadUrl(session.url)
         serviceLocator!!.sessionRepo.events.subscribe {
             when (it) {
                 SessionRepo.Event.YouTubeBack -> youtubeBackHandler.onBackPressed()
@@ -294,7 +277,8 @@ class WebDisplayFragment : EngineViewLifecycleFragment(), Session.Observer {
             } else {
                 // There's no session (anymore). Let's create a new one.
                 requireComponents.sessionManager.add(Session(url), selected = true)
-                requireComponents.sessionManager.getOrCreateEngineSession().resetView(requireActivity())
+                // TODO
+                //requireComponents.sessionUseCases.resetView(requireActivity())
             }
         }
     }

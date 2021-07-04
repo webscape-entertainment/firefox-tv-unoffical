@@ -8,9 +8,9 @@ package org.mozilla.tv.firefox.utils
 import android.content.Context
 import android.net.Uri
 import android.webkit.URLUtil
-
-import org.mozilla.tv.firefox.ext.serviceLocator
-
+import mozilla.components.browser.state.state.selectedOrDefaultSearchEngine
+import mozilla.components.feature.search.ext.buildSearchUrl
+import org.mozilla.tv.firefox.ext.components
 import java.net.URI
 import java.net.URISyntaxException
 
@@ -69,11 +69,11 @@ object UrlUtils {
     }
 
     @JvmStatic
-    fun createSearchUrl(context: Context, searchTerm: String): String {
-        val searchEngine = context.serviceLocator
-            .getDefaultSearchEngine(context)
+    fun createSearchUrl(context: Context, searchTerm: String): String? {
+        //val searchEngine = context.serviceLocator.searchEngineManager
+        //    .getDefaultSearchEngine(context)
 
-        return searchEngine.buildSearchUrl(searchTerm)
+        return context.components.store.state.search.selectedOrDefaultSearchEngine?.buildSearchUrl(searchTerm)
     }
 
     @JvmStatic

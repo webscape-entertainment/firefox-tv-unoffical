@@ -40,7 +40,7 @@ class SettingsChannelAdapter(
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SettingsTileHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.settings_tile, parent, false)
+        LayoutInflater.from(parent.context).inflate(R.layout.settings_tile, parent, false)
     )
 
     override fun getItemCount(): Int {

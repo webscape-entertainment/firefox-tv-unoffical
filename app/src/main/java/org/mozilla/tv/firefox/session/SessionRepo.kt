@@ -13,6 +13,8 @@ import io.reactivex.subjects.PublishSubject
 import io.reactivex.subjects.Subject
 import mozilla.components.browser.session.Session
 import mozilla.components.browser.session.SessionManager
+import mozilla.components.browser.state.state.BrowserState
+import mozilla.components.browser.state.state.SessionState
 import mozilla.components.feature.session.SessionUseCases
 import org.mozilla.tv.firefox.ext.isYoutubeTV
 import org.mozilla.tv.firefox.ext.toUri
@@ -25,6 +27,8 @@ import org.mozilla.tv.firefox.webdisplay.EngineViewCache
 class SessionRepo(
     private val sessionManager: SessionManager,
     private val sessionUseCases: SessionUseCases,
+    private val browserState: BrowserState,
+    private val sessionState: SessionState,
     private val turboMode: TurboMode
 ) {
 
@@ -70,7 +74,7 @@ class SessionRepo(
                 session.url.toUri()?.let { loadURL(it) }
             }
             fun causeSideEffects() {
-                if (isHostDifferentFromPrevious() && session.enddesktopMode) {
+                if (isHostDifferentFromPrevious() && sessionState.content.desktopMode) {
                     disableDesktopMode()
                 }
             }
@@ -84,8 +88,8 @@ class SessionRepo(
             val newState = State(
                 // The menu back button should not be enabled if the previous screen was our initial url (home)
                 backEnabled = canGoBackTwice?.invoke() ?: false,
-                forwardEnabled = session.canGoForward,
-                desktopModeActive = session.desktopMode,
+                forwardEnabled = sessionState.content.canGoForward,
+                desktopModeActive = sessionState.content.desktopMode,
                 turboModeActive = turboMode.isEnabled,
                 currentUrl = session.url,
                 loading = session.loading
@@ -94,7 +98,7 @@ class SessionRepo(
         }
     }
 
-    fun currentURLScreenshot(): Bitmap? = session?.thumbnail
+    fun currentURLScreenshot(): Bitmap? = sessionState.content.thumbnail
 
     /**
      * @param forceYouTubeExit if true while YouTube is active, back out of the
@@ -114,7 +118,7 @@ class SessionRepo(
             return true
         }
 
-        if (session.canGoBack) {
+        if (sessionState.content.canGoBack) {
             exitFullScreenIfPossible()
             sessionUseCases.goBack.invoke()
             //TelemetryIntegration.INSTANCE.browserBackControllerEvent()
@@ -125,12 +129,12 @@ class SessionRepo(
     }
 
     fun goForward() {
-        if (session?.canGoForward == true) sessionUseCases.goForward.invoke()
+        if (sessionState.content.canGoForward) sessionUseCases.goForward.invoke()
     }
 
     fun reload() = sessionUseCases.reload.invoke()
 
-    fun setDesktopMode(active: Boolean) = session?.let { it.desktopMode = active }
+    fun setDesktopMode(active: Boolean) = sessionUseCases.requestDesktopSite.invoke(active)
 
     /**
      * Causes [state] to emit its most recently pushed value. This can be used
@@ -139,7 +143,7 @@ class SessionRepo(
     fun pushCurrentValue() = _state.onNext(_state.value!!) // TODO does this do anything? If not,
     // we can have state.distinctUntilChanged and get rid of postIfNew
 
-    fun loadURL(url: Uri) = session?.let { sessionManager.getEngineSession(it)?.loadUrl(url.toString()) }
+    fun loadURL(url: Uri) = session?.let { sessionUseCases.loadUrl(url.toString()) }
 
     fun setTurboModeEnabled(enabled: Boolean) {
         turboMode.isEnabled = enabled
@@ -148,7 +152,7 @@ class SessionRepo(
     private val session: Session? get() = sessionManager.selectedSession
 
     fun clearBrowsingData(engineViewCache: EngineViewCache) {
-        sessionManager.getEngineSession()?.clearData() // Only works for [SystemEngineView]
+        sessionUseCases.clearData() // Only works for [SystemEngineView]
         sessionManager.removeAll()
         engineViewCache.doNotPersist()
     }
@@ -157,11 +161,11 @@ class SessionRepo(
      * Returns true if fullscreen was exited
      */
     fun exitFullScreenIfPossible(): Boolean {
-        if (session?.fullScreenMode == true) {
+        if (sessionState.content.fullScreen) {
             // Changing the URL while full-screened can lead to unstable behavior
             // (see #1224 and #1719), so we always attempt to exit full-screen
             // before doing so
-            sessionManager.getEngineSession()?.exitFullScreenMode()
+            sessionUseCases.exitFullscreen()
             return true
         }
         return false

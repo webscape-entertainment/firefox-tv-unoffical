@@ -74,7 +74,9 @@ class ScreenController(private val sessionRepo: SessionRepo) {
         val isUrl = UrlUtils.isUrl(urlStr)
         val updatedUrlStr = if (isUrl) UrlUtils.normalize(urlStr) else UrlUtils.createSearchUrl(context, urlStr)
 
-        showBrowserScreenForUrl(fragmentManager, updatedUrlStr)
+        if (updatedUrlStr != null) {
+            showBrowserScreenForUrl(fragmentManager, updatedUrlStr)
+        }
 
         if (isTextInput) {
             // Non-text input events are handled at the source, e.g. home tile click events.

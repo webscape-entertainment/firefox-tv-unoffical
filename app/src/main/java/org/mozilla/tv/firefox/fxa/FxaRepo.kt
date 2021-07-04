@@ -168,7 +168,6 @@ class FxaRepo(
     /**
      * See [AccountState] kdoc for more explanation on states.
      */
-    @VisibleForTesting(otherwise = NONE)
     inner class FirefoxAccountObserver : AccountObserver {
         override fun onAuthenticated(account: OAuthAccount, authType: AuthType) {
             _accountState.onNext(AuthenticatedNoProfile)

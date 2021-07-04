@@ -4,17 +4,12 @@
 
 package org.mozilla.tv.firefox.webdisplay
 
+//import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import android.content.Context
-import android.content.Intent
-import android.os.Handler
-import android.os.Looper
-import androidx.core.content.ContextCompat.startActivity
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import mozilla.components.browser.errorpages.ErrorType
 import mozilla.components.concept.engine.EngineSession
 import mozilla.components.concept.engine.request.RequestInterceptor
 import org.mozilla.tv.firefox.R
-import org.mozilla.tv.firefox.ext.serviceLocator
 import org.mozilla.tv.firefox.utils.BuildConstants.getInterceptionResponseContent
 import org.mozilla.tv.firefox.utils.URLs
 
@@ -27,7 +22,32 @@ class CustomContentRequestInterceptor(
 
     private var currentPageURL = ""
 
-    override fun onLoadRequest(session: EngineSession, uri: String): RequestInterceptor.InterceptionResponse.Content? {
+    override fun onLoadRequest(
+        engineSession: EngineSession,
+        uri: String,
+        lastUri: String?,
+        hasUserGesture: Boolean,
+        isSameDomain: Boolean,
+        isRedirect: Boolean,
+        isDirectNavigation: Boolean,
+        isSubframeRequest: Boolean
+    ): RequestInterceptor.InterceptionResponse? {
+        return onLoadRequest(engineSession, uri)
+
+
+        /*return super.onLoadRequest(
+            engineSession,
+            uri,
+            lastUri,
+            hasUserGesture,
+            isSameDomain,
+            isRedirect,
+            isDirectNavigation,
+            isSubframeRequest
+        )*/
+    }
+
+    fun onLoadRequest(session: EngineSession, uri: String): RequestInterceptor.InterceptionResponse.Content? {
         currentPageURL = uri
 
         return when (uri) {
@@ -40,7 +60,7 @@ class CustomContentRequestInterceptor(
             URLs.URL_GPL -> getInterceptionResponseContent(
                 LocalizedContent.generatePage(context, R.raw.gpl))
 
-            URLs.URL_LICENSES -> {
+            /*URLs.URL_LICENSES -> {
                 // Prevent getting stuck in this loop when clicking back from the activity
                 Handler(Looper.getMainLooper()).post { context.serviceLocator.sessionRepo.attemptBack() }
                 val intent = Intent(context, OssLicensesMenuActivity::class.java).apply {
@@ -49,7 +69,7 @@ class CustomContentRequestInterceptor(
                 startActivity(context, intent, null)
 
                 null
-            }
+            }*/
 
             else -> null
         }

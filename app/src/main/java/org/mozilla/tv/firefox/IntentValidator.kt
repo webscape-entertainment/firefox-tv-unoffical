@@ -79,7 +79,7 @@ object IntentValidator {
 
                 val isSearch = !UrlUtils.isUrl(dataString)
                 val url = if (isSearch) UrlUtils.createSearchUrl(context, dataString) else dataString
-                return ValidatedIntentData(url, SessionState.Source.ACTION_SEND)
+                return url?.let { ValidatedIntentData(it, SessionState.Source.ACTION_SEND) }
             }
         }
         return null

@@ -6,6 +6,7 @@
     android:id="@+id/browserFragmentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
@@ -66,6 +67,7 @@
             android:clipChildren="false">
 
             <mozilla.components.concept.engine.EngineView
+                tools:ignore="Instantiatable"
                 android:id="@+id/engineView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
