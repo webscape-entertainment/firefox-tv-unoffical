@@ -20,22 +20,6 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
-      
-    - name: Build Release
-      run: ./gradlew assembleSystemRelease
-    - uses: r0adkll/sign-android-release@v1
-      name: Sign app APK
-      id: sign_app_wr
-      with:
-        releaseDirectory: ./app/build/outputs/apk/system/release
-        signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
-        alias: ${{ secrets.DEBUG_ALIAS }}
-        keyStorePassword: ${{ secrets.DEBUG_KEY_PASSWORD }}
-        keyPassword: ${{ secrets.DEBUG_KEY_PASSWORD }}   
-    - uses: actions/upload-artifact@v2
-      with:
-        name: WebView release
-        path: ${{steps.sign_app_wr.outputs.signedReleaseFile}}
 
     - name: Build Debug
       run: ./gradlew assembleSystemDebug
@@ -52,11 +36,25 @@ jobs:
       with:
         name: WebView debug
         path: ${{steps.sign_app_wd.outputs.signedReleaseFile}}
+        
+    - name: Build Release
+      run: ./gradlew assembleSystemRelease
+    - uses: r0adkll/sign-android-release@v1
+      name: Sign app APK
+      id: sign_app_wr
+      with:
+        releaseDirectory: ./app/build/outputs/apk/system/release
+        signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
+        alias: ${{ secrets.DEBUG_ALIAS }}
+        keyStorePassword: ${{ secrets.DEBUG_KEY_PASSWORD }}
+        keyPassword: ${{ secrets.DEBUG_KEY_PASSWORD }}   
+    - uses: actions/upload-artifact@v2
+      with:
+        name: WebView release
+        path: ${{steps.sign_app_wr.outputs.signedReleaseFile}}
 
     - name: Multicheck
       run: ./gradlew clean assembleSystem assembleAndroidTest lint checkstyle ktlint pmd detekt test
-
-
 
   Gecko:
 
@@ -72,6 +70,22 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    - name: Build Debug
+      run: ./gradlew assembleGeckoDebug
+    - uses: r0adkll/sign-android-release@v1
+      name: Sign app APK
+      id: sign_app_gd
+      with:
+        releaseDirectory: ./app/build/outputs/apk/gecko/debug
+        signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
+        alias: ${{ secrets.DEBUG_ALIAS }}
+        keyStorePassword: ${{ secrets.DEBUG_KEY_PASSWORD }}
+        keyPassword: ${{ secrets.DEBUG_KEY_PASSWORD }}   
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Gecko debug
+        path: ${{steps.sign_app_gd.outputs.signedReleaseFile}}
       
     - name: Build Release
       run: ./gradlew assembleGeckoRelease
@@ -88,22 +102,6 @@ jobs:
       with:
         name: Gecko release
         path: ${{steps.sign_app_gr.outputs.signedReleaseFile}}
-        
-    - name: Build Debug
-      run: ./gradlew assembleGeckoDebug
-    - uses: r0adkll/sign-android-release@v1
-      name: Sign app APK
-      id: sign_app_gd
-      with:
-        releaseDirectory: ./app/build/outputs/apk/gecko/debug
-        signingKeyBase64: ${{ secrets.DEBUG_SIGNING_KEY }}
-        alias: ${{ secrets.DEBUG_ALIAS }}
-        keyStorePassword: ${{ secrets.DEBUG_KEY_PASSWORD }}
-        keyPassword: ${{ secrets.DEBUG_KEY_PASSWORD }}   
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Gecko debug
-        path: ${{steps.sign_app_gd.outputs.signedReleaseFile}}
 
     - name: Multicheck
       run: ./gradlew clean assembleGecko assembleAndroidTest lint checkstyle ktlint pmd detekt test
