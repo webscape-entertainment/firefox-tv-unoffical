@@ -1,5 +1,11 @@
 > ⚠️ Firefox has ended support for Amazon Fire TV. This app tries to do its work, but it is unoffical.
 
+PRs are welcome. Bug fixes will be merged immediately. Feature request are not welcome, unless you are willing to code it yourself, but before you start coding feature request open an issue to discuss it there first.
+
+**The only goal of this project to be maintainless as possible, with only engine updates and bugfixes.**
+
+
+
 Down bellow is original README:
 
 # Firefox for Amazon's Fire TV
